@@ -36,5 +36,6 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
     RUN apt install sudo -y
     RUN echo "# Allow members of mysql group to start and stop mysql service\n%mysql ALL=/usr/sbin/service mysql start\n%mysql ALL=/usr/sbin/service mysql stop\n%mysql ALL=/usr/sbin/service mysql restart" > /etc/sudoers.d/mysqlService
     RUN adduser dev mysql
+    RUN service mysql start; mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'addToDocker'"
 
 USER dev

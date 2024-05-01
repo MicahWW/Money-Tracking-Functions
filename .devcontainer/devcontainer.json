@@ -1,0 +1,23 @@
+{
+    "name": "Static Web App w/ Functions",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "forwardPorts": [ 7071, 4280 ],
+
+    "remoteUser": "dev",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.vscode-azureresourcegroups",
+                "ms-azuretools.vscode-azurefunctions",
+                "ms-azuretools.vscode-azurestaticwebapps",
+                "ms-dotnettools.csharp",
+                "ms-python.python",
+                "dbaeumer.vscode-eslint",
+                "ms-vscode.azure-account",
+                "ms-azuretools.vscode-docker"
+            ]
+        }
+    }
+}

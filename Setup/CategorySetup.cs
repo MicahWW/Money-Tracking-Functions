@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using Money.Modules;
 
-namespace Money.Setup.Category
+namespace Money.Setup
 {
     public class CategorySetup
     {

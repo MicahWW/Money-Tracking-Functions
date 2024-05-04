@@ -24,7 +24,7 @@ namespace Money.Setup
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
 
-            cmd.CommandText = "CREATE TABLE IF NOT EXISTS categories (id int DEFAULT NULL, label varchar(255) DEFAULT NULL)";
+            cmd.CommandText = $"CREATE TABLE IF NOT EXISTS {System.Environment.GetEnvironmentVariable("table-categories")} (id int DEFAULT NULL, label varchar(255) DEFAULT NULL)";
             cmd.ExecuteNonQuery();
 
             cmd.CommandText = "INSERT INTO categories VALUES (@number, @text)";

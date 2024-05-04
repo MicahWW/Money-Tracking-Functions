@@ -16,15 +16,22 @@ namespace Money.Setup
             _logger = logger;
         }
 
-        [Function("DatabaseSetup")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/database")] HttpRequest req)
+
+        public static void Setup()
         {
             var conn = DatabaseConnection.CreateConnection(true);
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = $"CREATE DATABASE {System.Environment.GetEnvironmentVariable("mysql-db")}";
+            cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS {System.Environment.GetEnvironmentVariable("mysql-db")}";
 
             cmd.ExecuteNonQuery();
+        }
+
+
+        [Function("DatabaseSetup")]
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/database")] HttpRequest req)
+        {
+            Setup();
 
             return new OkObjectResult("database setup");
         }

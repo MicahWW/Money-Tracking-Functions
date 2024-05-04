@@ -16,16 +16,22 @@ namespace Money.Setup
             _logger = logger;
         }
 
-        [Function("CategorySetup")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/categories")] HttpRequest req)
+        public static void Setup()
         {
             var categories = new List<string> {"No Category", "Dining", "Internet", "Gas/Automotive", "Grocery", "Phone/Cable", "Entertainment", "Healthcare", "Merchandise", "Other", "Payment", "Other Services"};
             var conn = DatabaseConnection.CreateConnection();
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
 
-            cmd.CommandText = $"CREATE TABLE IF NOT EXISTS {System.Environment.GetEnvironmentVariable("table-categories")} (id int DEFAULT NULL, label varchar(255) DEFAULT NULL)";
+            cmd.CommandText = $"CREATE TABLE IF NOT EXISTS {System.Environment.GetEnvironmentVariable("table-categories")} (id int NOT NULL PRIMARY KEY, label varchar(255) NOT NULL)";
             cmd.ExecuteNonQuery();
+
+            cmd.CommandText = $"SELECT COUNT(*) FROM {System.Environment.GetEnvironmentVariable("table-categories")}";
+            Object result = cmd.ExecuteScalar();
+            if (result != null && Convert.ToInt32(result) > 0)
+            {
+                return;
+            }
 
             cmd.CommandText = "INSERT INTO categories VALUES (@number, @text)";
             cmd.Parameters.AddWithValue("@number", 1);
@@ -39,6 +45,12 @@ namespace Money.Setup
                 cmd.Parameters["@text"].Value = categories[i];
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        [Function("CategorySetup")]
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/categories")] HttpRequest req)
+        {
+            Setup();
 
             return new OkObjectResult("categories setup");
         }

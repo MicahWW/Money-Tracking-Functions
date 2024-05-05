@@ -21,6 +21,7 @@ namespace Money.Setup
             DatabaseSetup.Setup();
             CategorySetup.Setup();
             LocationNamesSetup.Setup();
+            LocationCategorySetup.Setup();
             
             return new OkObjectResult("Full setup completed!");
         }

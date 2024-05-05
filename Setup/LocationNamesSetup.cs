@@ -23,7 +23,7 @@ namespace Money.Setup
             cmd.Connection = conn;
 
             cmd.CommandText = $"CREATE TABLE IF NOT EXISTS {System.Environment.GetEnvironmentVariable("table-locationLongToShortName")}" +
-            " (provider_name varchar(255) NOT NULL PRIMARY KEY, name varchar(255) DEFAULT NULL)";
+            " (provider_name varchar(255) NOT NULL, name varchar(255) DEFAULT NULL, PRIMARY KEY (provider_name))";
             cmd.ExecuteNonQuery();
         }
 

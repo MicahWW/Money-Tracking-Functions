@@ -23,7 +23,8 @@ namespace Money.Setup
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
 
-            cmd.CommandText = $"CREATE TABLE IF NOT EXISTS {System.Environment.GetEnvironmentVariable("table-categories")} (id int NOT NULL PRIMARY KEY, label varchar(255) NOT NULL)";
+            cmd.CommandText = $"CREATE TABLE IF NOT EXISTS {System.Environment.GetEnvironmentVariable("table-categories")}" +
+                " (id int NOT NULL, label varchar(255) NOT NULL, PRIMARY KEY (id))";
             cmd.ExecuteNonQuery();
 
             cmd.CommandText = $"SELECT COUNT(*) FROM {System.Environment.GetEnvironmentVariable("table-categories")}";

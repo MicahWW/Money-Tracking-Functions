@@ -19,10 +19,9 @@ namespace Money.Function
         [Function("Categories")]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "categories")] HttpRequest req)
         {
-            MySqlConnection conn = DatabaseConnection.CreateConnection();
-
-            MySqlCommand cmd = new MySqlCommand("SELECT * FROM categories", conn);
-            MySqlDataReader rdr = cmd.ExecuteReader();
+            var conn = DatabaseConnection.CreateConnection();
+            var cmd = new MySqlCommand($"SELECT * FROM {System.Environment.GetEnvironmentVariable("table-categories")}", conn);
+            var rdr = cmd.ExecuteReader();
 
             var result = new List<Category>();
             while(rdr.Read())

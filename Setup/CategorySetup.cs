@@ -18,16 +18,36 @@ namespace Money.Setup
 
         public static void Setup()
         {
-            var categories = new List<string> {"No Category", "Dining", "Internet", "Gas/Automotive", "Grocery", "Phone/Cable", "Entertainment", "Healthcare", "Merchandise", "Other", "Payment", "Other Services"};
+            var categories = new List<string> {
+                "No Category",
+                "Dining",
+                "Internet",
+                "Gas/Automotive",
+                "Grocery",
+                "Phone/Cable",
+                "Entertainment",
+                "Healthcare",
+                "Merchandise",
+                "Other",
+                "Payment",
+                "Other Services"
+            };
+
             var conn = DatabaseConnection.CreateConnection();
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
+            
+            var table_categories = Environment.GetEnvironmentVariable("table-categories");
 
-            cmd.CommandText = $"CREATE TABLE IF NOT EXISTS {System.Environment.GetEnvironmentVariable("table-categories")}" +
-                " (id int NOT NULL, label varchar(255) NOT NULL, PRIMARY KEY (id))";
+            cmd.CommandText =
+                $"CREATE TABLE IF NOT EXISTS {table_categories} (" +
+                "  id int NOT NULL," +
+                "  label varchar(255) NOT NULL," +
+                "  PRIMARY KEY (id)" +
+                ")";
             cmd.ExecuteNonQuery();
 
-            cmd.CommandText = $"SELECT COUNT(*) FROM {System.Environment.GetEnvironmentVariable("table-categories")}";
+            cmd.CommandText = $"SELECT COUNT(*) FROM {table_categories}";
             Object result = cmd.ExecuteScalar();
             if (result != null && Convert.ToInt32(result) > 0)
             {

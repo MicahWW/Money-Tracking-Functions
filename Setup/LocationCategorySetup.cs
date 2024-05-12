@@ -21,10 +21,17 @@ namespace Money.Setup
             var conn = DatabaseConnection.CreateConnection();
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
+
+            var table_locationCategoryDefaults = Environment.GetEnvironmentVariable("table-locationCategoryDefaults");
+            var table_categories = Environment.GetEnvironmentVariable("table-categories");
             
-            cmd.CommandText = $"CREATE TABLE IF NOT EXISTS {System.Environment.GetEnvironmentVariable("table-locationCategoryDefaults")}" +
-                " (location VARCHAR(255) NOT NULL, category_id int NOT NULL, PRIMARY KEY (location)," +
-                $" FOREIGN KEY (category_id) REFERENCES {System.Environment.GetEnvironmentVariable("table-categories")}(id))";
+            cmd.CommandText = 
+                $"CREATE TABLE IF NOT EXISTS {table_locationCategoryDefaults} (" +
+                "  location VARCHAR(255) NOT NULL," +
+                "  category_id int NOT NULL," +
+                "  PRIMARY KEY (location)," +
+                $" FOREIGN KEY (category_id) REFERENCES {table_categories}(id)" +
+                ")";
             cmd.ExecuteNonQuery();
         }
 

@@ -22,8 +22,14 @@ namespace Money.Setup
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
 
-            cmd.CommandText = $"CREATE TABLE IF NOT EXISTS {System.Environment.GetEnvironmentVariable("table-locationLongToShortName")}" +
-            " (provider_name varchar(255) NOT NULL, name varchar(255) DEFAULT NULL, PRIMARY KEY (provider_name))";
+            var table_locationLongToShortName = Environment.GetEnvironmentVariable("table-locationLongToShortName");
+
+            cmd.CommandText =
+                $"CREATE TABLE IF NOT EXISTS {table_locationLongToShortName} (" +
+                "  provider_name varchar(255) NOT NULL," +
+                " name varchar(255) DEFAULT NULL," +
+                " PRIMARY KEY (provider_name)" +
+                ")";
             cmd.ExecuteNonQuery();
         }
 

@@ -10,14 +10,14 @@ namespace Money.Modules
             string myConnectionString;
 
             if(!withOutDatabase)
-                myConnectionString = $"server={System.Environment.GetEnvironmentVariable("mysql-host")};" + 
-                    $"uid={System.Environment.GetEnvironmentVariable("mysql-user")};" +
-                    $"pwd={System.Environment.GetEnvironmentVariable("mysql-pass")};" +
-                    $"database={System.Environment.GetEnvironmentVariable("mysql-db")}";
+                myConnectionString = $"server={Environment.GetEnvironmentVariable("mysql-host")};" + 
+                    $"uid={Environment.GetEnvironmentVariable("mysql-user")};" +
+                    $"pwd={Environment.GetEnvironmentVariable("mysql-pass")};" +
+                    $"database={Environment.GetEnvironmentVariable("mysql-db")}";
             else
-                myConnectionString = $"server={System.Environment.GetEnvironmentVariable("mysql-host")};" + 
-                    $"uid={System.Environment.GetEnvironmentVariable("mysql-user")};" +
-                    $"pwd={System.Environment.GetEnvironmentVariable("mysql-pass")};";
+                myConnectionString = $"server={Environment.GetEnvironmentVariable("mysql-host")};" + 
+                    $"uid={Environment.GetEnvironmentVariable("mysql-user")};" +
+                    $"pwd={Environment.GetEnvironmentVariable("mysql-pass")};";
 
             conn = new MySqlConnection(myConnectionString);
             // TODO: error handeling for SQL login errors

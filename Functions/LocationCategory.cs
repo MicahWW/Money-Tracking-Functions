@@ -22,12 +22,13 @@ namespace Money.Functions
             var conn = DatabaseConnection.CreateConnection();
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
+            var table_locationCategoryDefaults = Environment.GetEnvironmentVariable("table-locationCategoryDefaults");
+            string? query = req.Query["locationName"];
 
-            if(String.IsNullOrEmpty(req.Query["locationName"]))
-                cmd.CommandText = $"SELECT * FROM {System.Environment.GetEnvironmentVariable("table-locationCategoryDefaults")}";
+            if(String.IsNullOrEmpty(query))
+                cmd.CommandText = $"SELECT * FROM {table_locationCategoryDefaults}";
             else
-                cmd.CommandText = $"SELECT * FROM {System.Environment.GetEnvironmentVariable("table-locationCategoryDefaults")}" +
-                    $" WHERE location = \"{req.Query["locationName"]}\"";
+                cmd.CommandText = $"SELECT * FROM {table_locationCategoryDefaults} WHERE location = \"{query}\"";
 
             var rdr = cmd.ExecuteReader();
             var result = new List<Dictionary<string, int>>();

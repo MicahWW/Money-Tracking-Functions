@@ -54,7 +54,7 @@ namespace Money.Setup
                 return;
             }
 
-            cmd.CommandText = "INSERT INTO categories VALUES (@number, @text)";
+            cmd.CommandText = $"INSERT INTO {table_categories} VALUES (@number, @text)";
             cmd.Parameters.AddWithValue("@number", 1);
             cmd.Parameters.AddWithValue("@text", "One");
             cmd.Prepare();

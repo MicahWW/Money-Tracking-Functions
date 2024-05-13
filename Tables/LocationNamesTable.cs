@@ -24,7 +24,7 @@ namespace Money.Tables
                 using (var cmd = new MySqlCommand())
                 {
                     cmd.Connection = conn;
-                    var table_locationLongToShortName = Environment.GetEnvironmentVariable("table-locationLongToShortName");
+                    var table_locationLongToShortName = SystemVariables.TableLocationNames;
                     cmd.CommandText = $"SELECT * FROM {table_locationLongToShortName}";
                     if (!string.IsNullOrEmpty(query))
                         cmd.CommandText += $" WHERE provider_name = \"{query}\"";
@@ -48,7 +48,7 @@ namespace Money.Tables
                 {
                     cmd.Connection = conn;
 
-                    var table_locationLongToShortName = Environment.GetEnvironmentVariable("table-locationLongToShortName");
+                    var table_locationLongToShortName = SystemVariables.TableLocationNames;
 
                     cmd.CommandText =
                         $"CREATE TABLE IF NOT EXISTS {table_locationLongToShortName} (" +

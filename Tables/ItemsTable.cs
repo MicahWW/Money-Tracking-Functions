@@ -39,7 +39,7 @@ namespace Money.Tables
                 using (var cmd = new MySqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = $"SELECT * FROM {Environment.GetEnvironmentVariable("table-expenseItems")}";
+                    cmd.CommandText = $"SELECT * FROM {SystemVariables.TableExpenseItems}";
 
                     var rdr = cmd.ExecuteReader();
 
@@ -68,7 +68,7 @@ namespace Money.Tables
                 using (var cmd = new MySqlCommand())
                 {
                     cmd.Connection = conn;
-                    var table_expenseItems = Environment.GetEnvironmentVariable("table-expenseItems");
+                    var table_expenseItems = SystemVariables.TableExpenseItems;
 
                     // for now only keeping items in the file in the database
                     cmd.CommandText = $"DELETE FROM {table_expenseItems}";
@@ -106,8 +106,8 @@ namespace Money.Tables
             var conn = DatabaseConnection.CreateConnection();
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
-            var table_expenseItems = Environment.GetEnvironmentVariable("table-expenseItems");
-            var table_categories = Environment.GetEnvironmentVariable("table-categories");
+            var table_expenseItems = SystemVariables.TableExpenseItems;
+            var table_categories = SystemVariables.TableCategories;
 
             cmd.CommandText =
                 $"CREATE TABLE IF NOT EXISTS {table_expenseItems} (" + 

@@ -7,17 +7,12 @@ namespace Money.Modules
         public static MySqlConnection CreateConnection(bool withOutDatabase=false)
         {
             MySqlConnection conn;
-            string myConnectionString;
+            string myConnectionString = $"server={SystemVariables.MySqlHostName};" +
+                $"uid={SystemVariables.MySqlUserName};" + 
+                $"pwd={SystemVariables.MySqlPassword};";
 
             if(!withOutDatabase)
-                myConnectionString = $"server={Environment.GetEnvironmentVariable("mysql-host")};" + 
-                    $"uid={Environment.GetEnvironmentVariable("mysql-user")};" +
-                    $"pwd={Environment.GetEnvironmentVariable("mysql-pass")};" +
-                    $"database={Environment.GetEnvironmentVariable("mysql-db")}";
-            else
-                myConnectionString = $"server={Environment.GetEnvironmentVariable("mysql-host")};" + 
-                    $"uid={Environment.GetEnvironmentVariable("mysql-user")};" +
-                    $"pwd={Environment.GetEnvironmentVariable("mysql-pass")};";
+                myConnectionString += $"database={SystemVariables.MySqlDatabase}";
 
             conn = new MySqlConnection(myConnectionString);
             // TODO: error handeling for SQL login errors

@@ -22,7 +22,7 @@ namespace Money.Setup
             var conn = DatabaseConnection.CreateConnection(true);
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS {Environment.GetEnvironmentVariable("mysql-db")}";
+            cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS {SystemVariables.MySqlDatabase}";
 
             cmd.ExecuteNonQuery();
         }

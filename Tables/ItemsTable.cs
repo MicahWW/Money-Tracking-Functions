@@ -62,6 +62,7 @@ namespace Money.Tables
         public static void InsertItems(List<TransactionRecord> items)
         {
             var categories = CategoriesTable.GetCategories();
+            var locationNames = LocationNamesTable.GetLocationNames();
 
             using (var conn = DatabaseConnection.CreateConnection())
             {
@@ -90,8 +91,12 @@ namespace Money.Tables
                         var category_find = categories.Find(x => x.label == items[i].Category);
                         // if the category couldn't be found in the list give it an id of "No Category"
                         int category_id = category_find != null ? category_find.id : 1;
+                        
+                        var name_find = locationNames.Find(x => x.provider_name == items[i].Location);
+                        // if the name is not in the table then use the provided name
+                        string shortName = name_find != null ? name_find.name : items[i].Location;
 
-                        cmd.Parameters["@location"].Value = items[i].Location;
+                        cmd.Parameters["@location"].Value = shortName;
                         cmd.Parameters["@amount"].Value = items[i].Amount;
                         cmd.Parameters["@categoryId"].Value = category_id;
                         cmd.Parameters["@date"].Value = items[i].TransactionDate.ToString("yyyy-MM-dd");

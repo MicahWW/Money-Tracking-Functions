@@ -21,6 +21,15 @@ namespace Money.Tables
                 this.category_id = category_id;
                 this.transaction_date = DateOnly.Parse(transaction_date);
             }
+
+            public ItemsRecord(int id, string location, decimal amount, int category_id, DateTime transaction_date)
+            {
+                this.id = id;
+                this.location = location;
+                this.amount = amount;
+                this.category_id = category_id;
+                this.transaction_date = DateOnly.FromDateTime(transaction_date);
+            }
         }
 
         public static List<ItemsRecord> GetItems()
@@ -36,7 +45,14 @@ namespace Money.Tables
 
                     var result = new List<ItemsRecord>();
                     while(rdr.Read())
-                        result.Add(new ItemsRecord((int)rdr[0], (string)rdr[1], (decimal)rdr[2], (int)rdr[3], (string)rdr[4]));
+                        result.Add(
+                            new ItemsRecord(
+                                (int)rdr[0], (string)rdr[1],
+                                (decimal)rdr[2],
+                                (int)rdr[3],
+                                (DateTime)rdr[4]
+                            )
+                        );
 
                     return result;
                 }

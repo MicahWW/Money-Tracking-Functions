@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Money.Tables;
 
 namespace Money.Setup
 {
@@ -18,10 +19,10 @@ namespace Money.Setup
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/full")] HttpRequest req)
         {
             DatabaseSetup.Setup();
-            CategorySetup.Setup();
-            LocationNamesSetup.Setup();
-            LocationCategorySetup.Setup();
-            ItemSetup.Setup();
+            CategoriesTable.Setup();
+            LocationNamesTable.Setup();
+            LocationCategoryTable.Setup();
+            ItemsTable.Setup();
             
             return new OkObjectResult("Full setup completed!");
         }

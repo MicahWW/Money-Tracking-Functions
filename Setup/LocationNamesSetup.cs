@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using MySql.Data.MySqlClient;
-using Money.Modules;
+using Money.Tables;
 
 namespace Money.Setup
 {
@@ -16,27 +15,10 @@ namespace Money.Setup
             _logger = logger;
         }
 
-        public static void Setup()
-        {
-            var conn = DatabaseConnection.CreateConnection();
-            var cmd = new MySqlCommand();
-            cmd.Connection = conn;
-
-            var table_locationLongToShortName = Environment.GetEnvironmentVariable("table-locationLongToShortName");
-
-            cmd.CommandText =
-                $"CREATE TABLE IF NOT EXISTS {table_locationLongToShortName} (" +
-                "  provider_name varchar(255) NOT NULL," +
-                " name varchar(255) DEFAULT NULL," +
-                " PRIMARY KEY (provider_name)" +
-                ")";
-            cmd.ExecuteNonQuery();
-        }
-
         [Function("LocationNamesSetup")]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/location-names")] HttpRequest req)
         {
-            Setup();
+            LocationNamesTable.Setup();
 
             return new OkObjectResult("Location name table created");
         }

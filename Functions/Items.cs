@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Money.Tables;
+using Money.Modules;
 
 namespace Money.Functions
 {
@@ -16,9 +17,20 @@ namespace Money.Functions
         }
 
         [Function("Items")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "items")] HttpRequest req)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "items")] HttpRequest req)
         {
-            return new OkObjectResult(ItemsTable.GetItems());
+            if (req.Method == "GET")
+                return new OkObjectResult(ItemsTable.GetItems());
+            else if (req.Method == "POST")
+            {
+                ItemsTable.InsertItems(
+                    CapitalOneTracationRecord.ParseCsv(
+                        await FormProcessing.ReadFormFileAsync(req, "file")
+                    )
+                );
+                return new OkObjectResult("done");
+            }
+            return new BadRequestObjectResult("havn't programmed yet");
         }
     }
 }

@@ -59,6 +59,48 @@ namespace Money.Tables
             }
         }
 
+        public static void InsertItems(List<TransactionRecord> items)
+        {
+            var categories = CategoriesTable.GetCategories();
+
+            using (var conn = DatabaseConnection.CreateConnection())
+            {
+                using (var cmd = new MySqlCommand())
+                {
+                    cmd.Connection = conn;
+                    var table_expenseItems = Environment.GetEnvironmentVariable("table-expenseItems");
+
+                    // for now only keeping items in the file in the database
+                    cmd.CommandText = $"DELETE FROM {table_expenseItems}";
+                    cmd.ExecuteNonQuery();
+
+                    cmd.CommandText = 
+                        $"INSERT INTO {table_expenseItems} " +
+                        "  (location, amount, category_id, transaction_date) " +
+                        "VALUES " +
+                        "  (@location, @amount, @categoryId, @date)";
+                    cmd.Parameters.AddWithValue("@location", "One");
+                    cmd.Parameters.AddWithValue("@amount", 1);
+                    cmd.Parameters.AddWithValue("@categoryId", 1);
+                    cmd.Parameters.AddWithValue("@date", DateOnly.Parse("01/01/1970"));
+                    cmd.Prepare();
+
+                    for(int i=0; i<items.Count; i++)
+                    {
+                        var category_find = categories.Find(x => x.label == items[i].Category);
+                        // if the category couldn't be found in the list give it an id of "No Category"
+                        int category_id = category_find != null ? category_find.id : 1;
+
+                        cmd.Parameters["@location"].Value = items[i].Location;
+                        cmd.Parameters["@amount"].Value = items[i].Amount;
+                        cmd.Parameters["@categoryId"].Value = category_id;
+                        cmd.Parameters["@date"].Value = items[i].TransactionDate.ToString("yyyy-MM-dd");
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
         public static void Setup()
         {
             var conn = DatabaseConnection.CreateConnection();

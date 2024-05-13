@@ -24,7 +24,7 @@ namespace Money.Tables
                 using (var cmd = new MySqlCommand())
                 {
                     cmd.Connection = conn;
-                    var table_locationCategoryDefaults = Environment.GetEnvironmentVariable("table-locationCategoryDefaults");
+                    var table_locationCategoryDefaults = SystemVariables.TableLocationCategories;
                     cmd.CommandText = $"SELECT * FROM {table_locationCategoryDefaults}";
                     if (!string.IsNullOrEmpty(query))
                         cmd.CommandText += $" WHERE location = \"{query}\"";
@@ -47,8 +47,8 @@ namespace Money.Tables
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
 
-            var table_locationCategoryDefaults = Environment.GetEnvironmentVariable("table-locationCategoryDefaults");
-            var table_categories = Environment.GetEnvironmentVariable("table-categories");
+            var table_locationCategoryDefaults = SystemVariables.TableLocationCategories;
+            var table_categories = SystemVariables.TableCategories;
             
             cmd.CommandText = 
                 $"CREATE TABLE IF NOT EXISTS {table_locationCategoryDefaults} (" +

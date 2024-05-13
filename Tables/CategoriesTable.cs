@@ -24,7 +24,7 @@ namespace Money.Tables
                 using (var cmd = new MySqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = $"SELECT * FROM {Environment.GetEnvironmentVariable("table-categories")}";
+                    cmd.CommandText = $"SELECT * FROM {SystemVariables.TableCategories}";
 
                     var rdr = cmd.ExecuteReader();
 
@@ -58,7 +58,7 @@ namespace Money.Tables
             var cmd = new MySqlCommand();
             cmd.Connection = conn;
             
-            var table_categories = Environment.GetEnvironmentVariable("table-categories");
+            var table_categories = SystemVariables.TableCategories;
 
             cmd.CommandText =
                 $"CREATE TABLE IF NOT EXISTS {table_categories} (" +

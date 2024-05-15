@@ -23,12 +23,19 @@ namespace Money.Functions
                 return new OkObjectResult(ItemsTable.GetItems());
             else if (req.Method == "POST")
             {
-                ItemsTable.InsertItems(
-                    CapitalOneTracationRecord.ParseCsv(
-                        await FormProcessing.ReadFormFileAsync(req, "file")
-                    )
-                );
-                return new OkObjectResult("done");
+                try
+                {
+                    ItemsTable.InsertItems(
+                        CapitalOneTracationRecord.ParseCsv(
+                            await FormProcessing.ReadFormFileAsync(req, "file")
+                        )
+                    );
+                    return new OkObjectResult("done");
+                }
+                catch (FormProcessing.FormProcessingException ex)
+                {
+                    return new ErrorResponse(ex.Message, 515);
+                }
             }
             return new BadRequestObjectResult("havn't programmed yet");
         }

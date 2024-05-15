@@ -15,23 +15,20 @@ namespace Money.Modules
                 {
                     var file = req.Form.Files[fileName];
                     if (file != null)
-                    {
                         return file.OpenReadStream();
-                    }
                     else
-                    {
-                        throw new Exception("File was null");
-                    }
+                        throw new FormProcessingException("File was null");
                 }
                 else
-                {
-                    throw new Exception("File was not part of form");
-                }
+                    throw new FormProcessingException("File was not part of form");
             }
             else
-            {
-                throw new Exception("Form has no content");
-            }
+                throw new FormProcessingException("Form has no content");
+        }
+
+        public class FormProcessingException : Exception
+        {
+            public FormProcessingException(string message) : base(message) { }
         }
     }
 }

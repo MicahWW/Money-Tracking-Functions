@@ -33,13 +33,13 @@ namespace Money.Modules
 
         public static string TableLocationNames { get { return GetSystemVariable("table-locationLongToShortName"); } }
 
-        public class SystemVariablesExecption : Exception
+        public class SystemVariablesException : Exception
         {
-            public SystemVariablesExecption(string message) : base(message) { }
+            public SystemVariablesException(string message) : base(message) { }
         }
 
 
-        private class MissingSystemVariableException : SystemVariablesExecption
+        private class MissingSystemVariableException : SystemVariablesException
         {
             public MissingSystemVariableException(string variable) : base
             (
@@ -48,7 +48,7 @@ namespace Money.Modules
             { }
         }
 
-        private class KeyVaultReferenceException : SystemVariablesExecption
+        private class KeyVaultReferenceException : SystemVariablesException
         {
             public KeyVaultReferenceException(string variable) : base
             (

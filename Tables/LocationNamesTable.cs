@@ -40,6 +40,38 @@ namespace Money.Tables
             }
         }
 
+        public static void InsertItems(List<LocationNameRecord> items)
+        {
+            using (var conn = DatabaseConnection.CreateConnection())
+            {
+                using (var cmd = new MySqlCommand())
+                {
+                    cmd.Connection = conn;
+                    var table_locationNames = SystemVariables.TableLocationNames;
+
+                    // for now this is just meant as a one time upload
+                    cmd.CommandText = $"DELETE FROM {table_locationNames}";
+                    cmd.ExecuteNonQuery();
+
+                    cmd.CommandText = 
+                        $"INSERT INTO {table_locationNames} " +
+                        "  (provider_name, name) " +
+                        "VALUES " +
+                        "  (@provider_name, @name)";
+                    cmd.Parameters.AddWithValue("@provider_name", "one");
+                    cmd.Parameters.AddWithValue("@name", "one");
+                    cmd.Prepare();
+
+                    for(int i=0; i<items.Count; i++)
+                    {
+                        cmd.Parameters["@provider_name"].Value = items[i].ProviderName;
+                        cmd.Parameters["@name"].Value = items[i].ShortName;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
         public static void Setup()
         {
             using (var conn = DatabaseConnection.CreateConnection())

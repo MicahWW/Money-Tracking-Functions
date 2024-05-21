@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Money.Tables;
+using Money.Modules;
 
 namespace Money.Functions
 {
@@ -16,9 +17,27 @@ namespace Money.Functions
         }
 
         [Function("LocationName")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "location-name")] HttpRequest req)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "location-name")] HttpRequest req)
         {
-            return new OkObjectResult(LocationNamesTable.GetLocationNames(req.Query["providerName"]));
+            if (req.Method == "GET")
+                return new OkObjectResult(LocationNamesTable.GetLocationNames(req.Query["providerName"]));
+            else if (req.Method == "POST")
+            {
+                try
+                {
+                    LocationNamesTable.InsertItems(
+                        LocationNameRecord.ParseCsv(
+                            await FormProcessing.ReadFormFileAsync(req, "file")
+                        )
+                    );
+                    return new OkObjectResult("done");
+                }
+                catch (FormProcessing.FormProcessingException ex)
+                {
+                    return new ErrorResponse(ex.Message, 515);
+                }
+            }
+            return new BadRequestObjectResult("havn't programmed yet");
         }
     }
 }

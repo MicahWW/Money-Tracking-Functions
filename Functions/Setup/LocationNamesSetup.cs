@@ -16,7 +16,7 @@ namespace Money.Setup
         }
 
         [Function("LocationNamesSetup")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/location-names")] HttpRequest req)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/location-name")] HttpRequest req)
         {
             LocationNamesTable.Setup();
 

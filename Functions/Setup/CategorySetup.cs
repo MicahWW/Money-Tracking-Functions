@@ -16,7 +16,7 @@ namespace Money.Setup
         }
 
         [Function("CategorySetup")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/categories")] HttpRequest req)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/category")] HttpRequest req)
         {
             CategoriesTable.Setup();
 

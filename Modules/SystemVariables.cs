@@ -8,11 +8,11 @@ namespace Money.Modules
 
             // Check if the environment variable were retrieved
             if (string.IsNullOrEmpty(result))
-                throw new MissingSystemVariableException(name);
+                throw new SystemVariablesException($"The variable {name} was not found or empty.");
 
             // Check if the KeyVault reference didn't get resolved
             if (result.Contains("Microsoft.KeyVault"))
-                throw new KeyVaultReferenceException(name);
+                throw new SystemVariablesException($"The variable {name} did not get resolved via the Key Vault.");
 
             return result;
         }
@@ -36,25 +36,6 @@ namespace Money.Modules
         public class SystemVariablesException : Exception
         {
             public SystemVariablesException(string message) : base(message) { }
-        }
-
-
-        private class MissingSystemVariableException : SystemVariablesException
-        {
-            public MissingSystemVariableException(string variable) : base
-            (
-                $"The variable {variable} was not found or empty."
-            )
-            { }
-        }
-
-        private class KeyVaultReferenceException : SystemVariablesException
-        {
-            public KeyVaultReferenceException(string variable) : base
-            (
-                $"The variable {variable} did not get resolved via the Key Vault."
-            )
-            { }
         }
     }
 }

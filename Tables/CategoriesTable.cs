@@ -21,9 +21,8 @@ namespace Money.Tables
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
-                using (var cmd = new MySqlCommand())
+                using (var cmd = new MySqlCommand("", conn))
                 {
-                    cmd.Connection = conn;
                     cmd.CommandText = $"SELECT * FROM {SystemVariables.TableCategories}";
 
                     var rdr = cmd.ExecuteReader();
@@ -41,10 +40,8 @@ namespace Money.Tables
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
-                using (var cmd = new MySqlCommand())
+                using (var cmd = new MySqlCommand("", conn))
                 {
-                cmd.Connection = conn;
-            
                 var table_categories = SystemVariables.TableCategories;
 
                 cmd.CommandText =

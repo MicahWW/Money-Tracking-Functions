@@ -19,12 +19,14 @@ namespace Money.Setup
 
         public static void Setup()
         {
-            var conn = DatabaseConnection.CreateConnection(true);
-            var cmd = new MySqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS {SystemVariables.MySqlDatabase}";
-
-            cmd.ExecuteNonQuery();
+            using(var conn = DatabaseConnection.CreateConnection(true))
+            {
+                using(var cmd = new MySqlCommand("", conn))
+                {
+                    cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS {SystemVariables.MySqlDatabase}";
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         [Function("DatabaseSetup")]

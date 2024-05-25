@@ -51,9 +51,8 @@ namespace Money.Setup
 
             using (var conn = DatabaseConnection.CreateConnection())
             {
-                using (var cmd = new MySqlCommand())
+                using (var cmd = new MySqlCommand("", conn))
                 {
-                    cmd.Connection = conn;
                     var table_categories = SystemVariables.TableCategories;
                     
                     cmd.CommandText = $"SELECT COUNT(*) FROM {table_categories}";

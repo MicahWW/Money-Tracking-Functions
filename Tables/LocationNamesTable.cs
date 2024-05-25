@@ -21,9 +21,8 @@ namespace Money.Tables
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
-                using (var cmd = new MySqlCommand())
+                using (var cmd = new MySqlCommand("", conn))
                 {
-                    cmd.Connection = conn;
                     var table_locationLongToShortName = SystemVariables.TableLocationNames;
                     cmd.CommandText = $"SELECT * FROM {table_locationLongToShortName}";
                     if (!string.IsNullOrEmpty(query))
@@ -44,9 +43,8 @@ namespace Money.Tables
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
-                using (var cmd = new MySqlCommand())
+                using (var cmd = new MySqlCommand("", conn))
                 {
-                    cmd.Connection = conn;
                     var table_locationNames = SystemVariables.TableLocationNames;
 
                     // for now this is just meant as a one time upload
@@ -76,10 +74,8 @@ namespace Money.Tables
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
-                using (var cmd = new MySqlCommand())
+                using (var cmd = new MySqlCommand("", conn))
                 {
-                    cmd.Connection = conn;
-
                     var table_locationLongToShortName = SystemVariables.TableLocationNames;
 
                     cmd.CommandText =

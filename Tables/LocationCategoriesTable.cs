@@ -21,9 +21,8 @@ namespace Money.Tables
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
-                using (var cmd = new MySqlCommand())
+                using (var cmd = new MySqlCommand("", conn))
                 {
-                    cmd.Connection = conn;
                     var table_locationCategoryDefaults = SystemVariables.TableLocationCategories;
                     cmd.CommandText = $"SELECT * FROM {table_locationCategoryDefaults}";
                     if (!string.IsNullOrEmpty(query))
@@ -43,21 +42,23 @@ namespace Money.Tables
 
         public static void Setup()
         {
-            var conn = DatabaseConnection.CreateConnection();
-            var cmd = new MySqlCommand();
-            cmd.Connection = conn;
-
-            var table_locationCategoryDefaults = SystemVariables.TableLocationCategories;
-            var table_categories = SystemVariables.TableCategories;
-            
-            cmd.CommandText = 
-                $"CREATE TABLE IF NOT EXISTS {table_locationCategoryDefaults} (" +
-                "  location VARCHAR(255) NOT NULL," +
-                "  category_id int NOT NULL," +
-                "  PRIMARY KEY (location)," +
-                $" FOREIGN KEY (category_id) REFERENCES {table_categories}(id)" +
-                ")";
-            cmd.ExecuteNonQuery();
+            using(var conn = DatabaseConnection.CreateConnection())
+            {
+                using(var cmd = new MySqlCommand("", conn))
+                {
+                    var table_locationCategoryDefaults = SystemVariables.TableLocationCategories;
+                    var table_categories = SystemVariables.TableCategories;
+                    
+                    cmd.CommandText = 
+                        $"CREATE TABLE IF NOT EXISTS {table_locationCategoryDefaults} (" +
+                        "  location VARCHAR(255) NOT NULL," +
+                        "  category_id int NOT NULL," +
+                        "  PRIMARY KEY (location)," +
+                        $" FOREIGN KEY (category_id) REFERENCES {table_categories}(id)" +
+                        ")";
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

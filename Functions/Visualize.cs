@@ -28,9 +28,8 @@ namespace Money.Function
 
             using(var conn = DatabaseConnection.CreateConnection())
             {
-                using(var cmd = new MySqlCommand())
+                using(var cmd = new MySqlCommand("", conn))
                 {
-                    cmd.Connection = conn;
                     cmd.CommandText = 
                         "SELECT " +
                         "  location, category_id, SUM(amount), COUNT(*) " +

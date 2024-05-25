@@ -21,9 +21,25 @@ namespace Money.Function
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "visualize")] HttpRequest req)
         {
             string? type = req.Query["type"];
+            string? startDate = req.Query["startDate"];
+            string? endDate = req.Query["endDate"];
+            string whereDateRange = "";
+
             if (string.IsNullOrEmpty(type))
                 return new ErrorResponse("No type was passed", 515);
             type = type.ToLower();
+            if (string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
+                return new ErrorResponse("An end date was given with no start date.", 515);
+            if (string.IsNullOrEmpty(endDate) && !string.IsNullOrEmpty(startDate))
+                return new ErrorResponse("A start date was given with no end date.", 515);
+            if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
+            {
+                DateOnly beginDate = DateOnly.Parse(startDate);
+                DateOnly lastDate = DateOnly.Parse(endDate);
+
+
+                whereDateRange = $"WHERE transaction_date BETWEEN '{beginDate:yyyy-MM-dd}' AND '{lastDate:yyyy-MM-dd}' ";
+            }
 
             var categories = CategoriesTable.GetCategories();
 
@@ -34,11 +50,13 @@ namespace Money.Function
                     switch (type)
                     {
                         case "sunburst":
+                        case "pie":
                             cmd.CommandText = 
                                 "SELECT " +
                                 "  location, category_id, SUM(amount), COUNT(*) " +
                                 "FROM " +
                                 $"  {SystemVariables.TableExpenseItems} " +
+                                whereDateRange +
                                 "GROUP BY " +
                                 "  location, category_id";
 

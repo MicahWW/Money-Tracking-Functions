@@ -16,8 +16,8 @@ namespace Money.Functions
             _logger = logger;
         }
 
-        [Function("LocationName")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "location-name")] HttpRequest req)
+        [Function("LocationNames")]
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "location-names")] HttpRequest req)
         {
             if (req.Method == "GET")
                 return new OkObjectResult(LocationNamesTable.GetLocationNames(req.Query["providerName"]));

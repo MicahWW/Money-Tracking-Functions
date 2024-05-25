@@ -20,9 +20,10 @@ namespace Money.Function
         [Function("Visualize")]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "visualize")] HttpRequest req)
         {
-            // right now data is meant for a sunburst chart
-
-
+            string? type = req.Query["type"];
+            if (string.IsNullOrEmpty(type))
+                return new ErrorResponse("No type was passed", 515);
+            type = type.ToLower();
 
             var categories = CategoriesTable.GetCategories();
 
@@ -30,32 +31,38 @@ namespace Money.Function
             {
                 using(var cmd = new MySqlCommand("", conn))
                 {
-                    cmd.CommandText = 
-                        "SELECT " +
-                        "  location, category_id, SUM(amount), COUNT(*) " +
-                        "FROM " +
-                        $"  {SystemVariables.TableExpenseItems} " +
-                        "GROUP BY " +
-                        "  location, category_id";
-
-                    var rdr = cmd.ExecuteReader();
-
-                    var result = new List<VisualizeRecord>();
-
-                    // this adds the categories for the items to leaf off of
-                    categories.ForEach(x =>
+                    switch (type)
                     {
-                        result.Add(new VisualizeRecord(x.label));
-                    });
-                    while(rdr.Read())
-                    {
-                        var category_find = categories.Find(x => x.id == (int)rdr[1]);
-                        string category_name = category_find != null ? category_find.label : "error";
-                        // (int)(long) : this is being used because MySQL is returning a int64
-                        result.Add(new VisualizeRecord((string)rdr[0], category_name, (decimal)rdr[2], (int)(long)rdr[3]));
+                        case "sunburst":
+                            cmd.CommandText = 
+                                "SELECT " +
+                                "  location, category_id, SUM(amount), COUNT(*) " +
+                                "FROM " +
+                                $"  {SystemVariables.TableExpenseItems} " +
+                                "GROUP BY " +
+                                "  location, category_id";
+
+                            var rdr = cmd.ExecuteReader();
+
+                            var result = new List<VisualizeRecord>();
+
+                            // this adds the categories for the items to leaf off of
+                            categories.ForEach(x =>
+                            {
+                                result.Add(new VisualizeRecord(x.label));
+                            });
+                            while(rdr.Read())
+                            {
+                                var category_find = categories.Find(x => x.id == (int)rdr[1]);
+                                string category_name = category_find != null ? category_find.label : "error";
+                                // (int)(long) : this is being used because MySQL is returning a int64
+                                result.Add(new VisualizeRecord((string)rdr[0], category_name, (decimal)rdr[2], (int)(long)rdr[3]));
+                            }
+                            
+                            return new OkObjectResult(result);
+                        default:
+                            return new ErrorResponse($"Given type of {type} is not allowed", 515);
                     }
-                    
-                    return new OkObjectResult(result);
                 }
             }
         }

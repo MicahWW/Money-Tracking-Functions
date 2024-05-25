@@ -81,7 +81,7 @@ namespace Money.Tables
                         "VALUES " +
                         "  (@location, @amount, @categoryId, @date)";
                     cmd.Parameters.AddWithValue("@location", "One");
-                    cmd.Parameters.AddWithValue("@amount", 1);
+                    cmd.Parameters.AddWithValue("@amount", 1.0);
                     cmd.Parameters.AddWithValue("@categoryId", 1);
                     cmd.Parameters.AddWithValue("@date", DateOnly.Parse("01/01/1970"));
                     cmd.Prepare();

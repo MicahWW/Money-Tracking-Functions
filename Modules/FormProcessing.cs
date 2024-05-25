@@ -4,6 +4,15 @@ namespace Money.Modules
 {
     public class FormProcessing
     {
+        /// <summary>
+        /// Reads the file from the given HttpRequest.
+        /// </summary>
+        /// <param name="req">A HttpRequest with a file passed in with the key
+        /// `fileName`.</param>
+        /// <param name="fileName">The name of the key holding the passed file.
+        /// </param>
+        /// <returns>A stream of the file's data.</returns>
+        /// <exception cref="FormProcessingException"></exception>
         public static async Task<Stream> ReadFormFileAsync(HttpRequest req, string fileName)
         {
             // checks if any form data is even present

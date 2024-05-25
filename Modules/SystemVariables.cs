@@ -1,7 +1,20 @@
 namespace Money.Modules
 {
+    /// <summary>
+    /// This is used to get environment variables and make sure that the code
+    /// for checking for errors for the requested environment variables is
+    /// consistent. The environment variables are retreived each time so they
+    /// can be dynamic.
+    /// </summary>
     public class SystemVariables
     {
+        /// <summary>
+        /// This helps keep the error detection and handeling for all of the
+        /// environment variables in one place.
+        /// </summary>
+        /// <param name="name">The name of the environment variable</param>
+        /// <returns>The environment variable from the system.</returns>
+        /// <exception cref="SystemVariablesException"></exception>
         private static string GetSystemVariable(string name)
         {
             string? result = Environment.GetEnvironmentVariable(name);
@@ -33,6 +46,10 @@ namespace Money.Modules
 
         public static string TableLocationNames { get { return GetSystemVariable("table-locationLongToShortName"); } }
 
+        /// <summary>
+        /// The Enviornment variables either weren't there or couldn't be
+        /// interpreted.
+        /// </summary>
         public class SystemVariablesException : Exception
         {
             public SystemVariablesException(string message) : base(message) { }

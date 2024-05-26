@@ -43,7 +43,7 @@ namespace Money.Tables
                     var rdr = cmd.ExecuteReader();
 
                     var result = new List<ItemsRecord>();
-                    while(rdr.Read())
+                    while (rdr.Read())
                         result.Add(
                             new ItemsRecord(
                                 (int)rdr[0], (string)rdr[1],
@@ -73,7 +73,7 @@ namespace Money.Tables
                     cmd.CommandText = $"DELETE FROM {table_expenseItems}";
                     cmd.ExecuteNonQuery();
 
-                    cmd.CommandText = 
+                    cmd.CommandText =
                         $"INSERT INTO {table_expenseItems} " +
                         "  (location, amount, category_id, transaction_date) " +
                         "VALUES " +
@@ -84,12 +84,12 @@ namespace Money.Tables
                     cmd.Parameters.AddWithValue("@date", DateOnly.Parse("01/01/1970"));
                     cmd.Prepare();
 
-                    for(int i=0; i<items.Count; i++)
+                    for (int i = 0; i < items.Count; i++)
                     {
                         var category_find = categories.Find(x => x.label == items[i].Category);
                         // if the category couldn't be found in the list give it an id of "No Category"
                         int category_id = category_find != null ? category_find.id : 1;
-                        
+
                         var name_find = locationNames.Find(x => x.provider_name == items[i].Location);
                         // if the name is not in the table then use the provided name
                         string shortName = name_find != null ? name_find.name : items[i].Location;
@@ -106,15 +106,15 @@ namespace Money.Tables
 
         public static void Setup()
         {
-            using(var conn = DatabaseConnection.CreateConnection())
+            using (var conn = DatabaseConnection.CreateConnection())
             {
-                using(var cmd = new MySqlCommand("", conn))
+                using (var cmd = new MySqlCommand("", conn))
                 {
                     var table_expenseItems = SystemVariables.TableExpenseItems;
                     var table_categories = SystemVariables.TableCategories;
 
                     cmd.CommandText =
-                        $"CREATE TABLE IF NOT EXISTS {table_expenseItems} (" + 
+                        $"CREATE TABLE IF NOT EXISTS {table_expenseItems} (" +
                         "  id int NOT NULL AUTO_INCREMENT," +
                         "  location varchar(255) NOT NULL," +
                         "  amount decimal(15, 2) NOT NULL," +

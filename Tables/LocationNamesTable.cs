@@ -17,7 +17,7 @@ namespace Money.Tables
             }
         }
 
-        public static List<LocationnamesRecord> GetLocationNames(string? query="")
+        public static List<LocationnamesRecord> GetLocationNames(string? query = "")
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
@@ -31,7 +31,7 @@ namespace Money.Tables
                     var rdr = cmd.ExecuteReader();
 
                     var result = new List<LocationnamesRecord>();
-                    while(rdr.Read())
+                    while (rdr.Read())
                         result.Add(new LocationnamesRecord((string)rdr[0], (string)rdr[1]));
 
                     return result;
@@ -51,7 +51,7 @@ namespace Money.Tables
                     cmd.CommandText = $"DELETE FROM {table_locationNames}";
                     cmd.ExecuteNonQuery();
 
-                    cmd.CommandText = 
+                    cmd.CommandText =
                         $"INSERT INTO {table_locationNames} " +
                         "  (provider_name, name) " +
                         "VALUES " +
@@ -60,7 +60,7 @@ namespace Money.Tables
                     cmd.Parameters.AddWithValue("@name", "one");
                     cmd.Prepare();
 
-                    for(int i=0; i<items.Count; i++)
+                    for (int i = 0; i < items.Count; i++)
                     {
                         cmd.Parameters["@provider_name"].Value = items[i].ProviderName;
                         cmd.Parameters["@name"].Value = items[i].ShortName;

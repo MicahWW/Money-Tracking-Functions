@@ -28,7 +28,7 @@ namespace Money.Tables
                     var rdr = cmd.ExecuteReader();
 
                     var result = new List<CategoriesRecord>();
-                    while(rdr.Read())
+                    while (rdr.Read())
                         result.Add(new CategoriesRecord((int)rdr[0], (string)rdr[1]));
 
                     return result;
@@ -42,15 +42,15 @@ namespace Money.Tables
             {
                 using (var cmd = new MySqlCommand("", conn))
                 {
-                var table_categories = SystemVariables.TableCategories;
+                    var table_categories = SystemVariables.TableCategories;
 
-                cmd.CommandText =
-                    $"CREATE TABLE IF NOT EXISTS {table_categories} (" +
-                    "  id int NOT NULL," +
-                    "  label varchar(255) NOT NULL," +
-                    "  PRIMARY KEY (id)" +
-                    ")";
-                cmd.ExecuteNonQuery();
+                    cmd.CommandText =
+                        $"CREATE TABLE IF NOT EXISTS {table_categories} (" +
+                        "  id int NOT NULL," +
+                        "  label varchar(255) NOT NULL," +
+                        "  PRIMARY KEY (id)" +
+                        ")";
+                    cmd.ExecuteNonQuery();
                 }
             }
         }

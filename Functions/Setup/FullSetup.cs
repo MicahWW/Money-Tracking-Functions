@@ -24,7 +24,7 @@ namespace Money.Setup
             LocationCategoryTable.Setup();
             ItemsTable.Setup();
             InsertTempData.Setup();
-            
+
             return new OkObjectResult("Full setup completed!");
         }
     }

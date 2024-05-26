@@ -17,7 +17,7 @@ namespace Money.Tables
             }
         }
 
-        public static List<LocationCategoryRecord> GetLocationCategories(string? query="")
+        public static List<LocationCategoryRecord> GetLocationCategories(string? query = "")
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
@@ -32,7 +32,7 @@ namespace Money.Tables
 
 
                     var result = new List<LocationCategoryRecord>();
-                    while(rdr.Read())
+                    while (rdr.Read())
                         result.Add(new LocationCategoryRecord((string)rdr[0], (int)rdr[1]));
 
                     return result;
@@ -42,14 +42,14 @@ namespace Money.Tables
 
         public static void Setup()
         {
-            using(var conn = DatabaseConnection.CreateConnection())
+            using (var conn = DatabaseConnection.CreateConnection())
             {
-                using(var cmd = new MySqlCommand("", conn))
+                using (var cmd = new MySqlCommand("", conn))
                 {
                     var table_locationCategoryDefaults = SystemVariables.TableLocationCategories;
                     var table_categories = SystemVariables.TableCategories;
-                    
-                    cmd.CommandText = 
+
+                    cmd.CommandText =
                         $"CREATE TABLE IF NOT EXISTS {table_locationCategoryDefaults} (" +
                         "  location VARCHAR(255) NOT NULL," +
                         "  category_id int NOT NULL," +

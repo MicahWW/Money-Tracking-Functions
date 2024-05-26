@@ -20,7 +20,7 @@ namespace Money.Modules
             {
                 var formdata = await req.ReadFormAsync();
                 // checks if a file was sent as part of the request
-                if (formdata.Files.Count > 0) 
+                if (formdata.Files.Count > 0)
                 {
                     var file = req.Form.Files[fileName];
                     if (file != null)

@@ -43,15 +43,15 @@ namespace Money.Function
 
             var categories = CategoriesTable.GetCategories();
 
-            using(var conn = DatabaseConnection.CreateConnection())
+            using (var conn = DatabaseConnection.CreateConnection())
             {
-                using(var cmd = new MySqlCommand("", conn))
+                using (var cmd = new MySqlCommand("", conn))
                 {
                     switch (type)
                     {
                         case "sunburst":
                         case "pie":
-                            cmd.CommandText = 
+                            cmd.CommandText =
                                 "SELECT " +
                                 "  location, category_id, SUM(amount), COUNT(*) " +
                                 "FROM " +
@@ -69,14 +69,14 @@ namespace Money.Function
                             {
                                 result.Add(new VisualizeRecord(x.label));
                             });
-                            while(rdr.Read())
+                            while (rdr.Read())
                             {
                                 var category_find = categories.Find(x => x.id == (int)rdr[1]);
                                 string category_name = category_find != null ? category_find.label : "error";
                                 // (int)(long) : this is being used because MySQL is returning a int64
                                 result.Add(new VisualizeRecord((string)rdr[0], category_name, (decimal)rdr[2], (int)(long)rdr[3]));
                             }
-                            
+
                             return new OkObjectResult(result);
                         default:
                             return new ErrorResponse($"Given type of {type} is not allowed", 515);

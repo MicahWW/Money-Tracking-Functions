@@ -24,7 +24,7 @@ namespace Money.Modules
 
     public class CapitalOneTracationRecord : TransactionRecord
     {
-        public CapitalOneTracationRecord(string date, string location, string category, string debit, string credit) : 
+        public CapitalOneTracationRecord(string date, string location, string category, string debit, string credit) :
         base(date: date, location: location, category: category)
         {
             if (string.IsNullOrEmpty(debit) && !string.IsNullOrEmpty(credit))

@@ -15,14 +15,14 @@ namespace Money.Modules
         /// database has been created.</param>
         /// <returns>A MySqlConnection connected to database that is defined in
         /// the system's environment variables.</returns>
-        public static MySqlConnection CreateConnection(bool withOutDatabase=false)
+        public static MySqlConnection CreateConnection(bool withOutDatabase = false)
         {
             MySqlConnection conn;
             string myConnectionString = $"server={SystemVariables.MySqlHostName};" +
-                $"uid={SystemVariables.MySqlUserName};" + 
+                $"uid={SystemVariables.MySqlUserName};" +
                 $"pwd={SystemVariables.MySqlPassword};";
 
-            if(!withOutDatabase)
+            if (!withOutDatabase)
                 myConnectionString += $"database={SystemVariables.MySqlDatabase}";
 
             conn = new MySqlConnection(myConnectionString);

@@ -54,7 +54,7 @@ namespace Money.Setup
                 using (var cmd = new MySqlCommand("", conn))
                 {
                     var table_categories = SystemVariables.TableCategories;
-                    
+
                     cmd.CommandText = $"SELECT COUNT(*) FROM {table_categories}";
                     object result = cmd.ExecuteScalar();
                     if (!(result != null && Convert.ToInt32(result) > 0))
@@ -64,12 +64,12 @@ namespace Money.Setup
                         cmd.Parameters.AddWithValue("@label", "One");
                         cmd.Prepare();
 
-                        for(int i=0; i<categories.Count; i++)
+                        for (int i = 0; i < categories.Count; i++)
                         {
-                            cmd.Parameters["@id"].Value = i+1;
+                            cmd.Parameters["@id"].Value = i + 1;
                             cmd.Parameters["@label"].Value = categories[i];
                             cmd.ExecuteNonQuery();
-                        }   
+                        }
                     }
 
                     var table_locationLongToShortName = SystemVariables.TableLocationNames;
@@ -82,7 +82,7 @@ namespace Money.Setup
                         cmd.Parameters.AddWithValue("@name", "One");
                         cmd.Prepare();
 
-                        foreach(KeyValuePair<string, string> entry in locationNames)
+                        foreach (KeyValuePair<string, string> entry in locationNames)
                         {
                             cmd.Parameters["@providerName"].Value = entry.Key;
                             cmd.Parameters["@name"].Value = entry.Value;

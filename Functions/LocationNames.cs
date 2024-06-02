@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Money.Tables;
-using Money.Modules;
 
 namespace Money.Functions
 {
@@ -23,19 +22,10 @@ namespace Money.Functions
                 return new OkObjectResult(LocationNamesTable.GetLocationNames(req.Query["providerName"]));
             else if (req.Method == "POST")
             {
-                if (req.HasFormContentType)
+                if (req.ContentType != null && req.ContentLength != null)
                 {
-                    try
-                    {
-                        LocationNamesTable.UploadData(
-                                await FormProcessing.ReadFormFileAsync(req, "file")
-                        );
-                        return new OkObjectResult("done");
-                    }
-                    catch (FormProcessing.FormProcessingException ex)
-                    {
-                        return new ErrorResponse(ex.Message, 515);
-                    }
+                    await LocationNamesTable.UploadData(req.Body, req.ContentType, (int)req.ContentLength);
+                    return new OkObjectResult("yay");
                 }
             }
             return new BadRequestObjectResult("havn't programmed yet");

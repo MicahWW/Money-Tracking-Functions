@@ -1,6 +1,8 @@
 using Money.Modules;
 using MySql.Data.MySqlClient;
 using Microsoft.VisualBasic.FileIO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Money.Tables
 {
@@ -8,7 +10,9 @@ namespace Money.Tables
     {
         public class LocationNamesRecord
         {
+            [JsonRequired]
             public string provider_name { get; set; }
+            [JsonRequired]
             public string name { get; set; }
 
             public LocationNamesRecord(string provider_name, string name)
@@ -73,12 +77,11 @@ namespace Money.Tables
 
         public static async Task UploadData(Stream stream, string contentType, int contentLength)
         {
-            StringReader sr = await HttpRequestTools.ReadBodyAsync(stream, contentLength);
-
             var result = new List<LocationNamesRecord>();
             switch (contentType)
             {
                 case "text/csv":
+                    StringReader sr = await HttpRequestTools.ReadBodyAsync(stream, contentLength);
                     using (TextFieldParser parser = new TextFieldParser(sr))
                     {
                         parser.TextFieldType = FieldType.Delimited;
@@ -93,6 +96,17 @@ namespace Money.Tables
                                 result.Add(new LocationNamesRecord(columns[0], columns[1]));
                         }
                     }
+                    break;
+                case "application/json":
+                    List<LocationNamesRecord>? deserializedData;
+                    /* When deserializing it will throw exceptions when an item
+                     * is missing one of the requried parameters defined in by
+                     * [JsonRequired]. Error handling should be handled when
+                     * calling this function so the proper messaging can be returned.
+                     */
+                    deserializedData = await JsonSerializer.DeserializeAsync<List<LocationNamesRecord>>(stream);
+                    if (deserializedData != null)
+                        result.AddRange(deserializedData);
                     break;
             }
 

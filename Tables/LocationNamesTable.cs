@@ -73,11 +73,7 @@ namespace Money.Tables
 
         public static async Task UploadData(Stream stream, string contentType, int contentLength)
         {
-            byte[] streamContentBytes = new byte[contentLength];
-            await stream.ReadAsync(streamContentBytes, 0, contentLength);
-            string streamContentString = System.Text.Encoding.Default.GetString(streamContentBytes);
-            StringReader sr = new StringReader(streamContentString);
-            
+            StringReader sr = await HttpRequestTools.ReadBodyAsync(stream, contentType, contentLength);
 
             var result = new List<LocationNamesRecord>();
             switch (contentType)

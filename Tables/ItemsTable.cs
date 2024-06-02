@@ -1,5 +1,6 @@
 using Money.Modules;
 using MySql.Data.MySqlClient;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Money.Tables
 {
@@ -13,23 +14,32 @@ namespace Money.Tables
             public int category_id { get; set; }
             public DateOnly transaction_date { get; set; }
 
-            public ItemsRecord(int id, string location, decimal amount, int category_id, string transaction_date)
+            public ItemsRecord(int id, string location, decimal amount, int category_id, DateOnly transaction_date)
             {
                 this.id = id;
                 this.location = location;
                 this.amount = amount;
                 this.category_id = category_id;
-                this.transaction_date = DateOnly.Parse(transaction_date);
+                this.transaction_date = transaction_date;
             }
 
-            public ItemsRecord(int id, string location, decimal amount, int category_id, DateTime transaction_date)
+            public ItemsRecord(int id, string location, decimal amount, string category, DateOnly transaction_date)
             {
                 this.id = id;
                 this.location = location;
                 this.amount = amount;
-                this.category_id = category_id;
-                this.transaction_date = DateOnly.FromDateTime(transaction_date);
+                this.transaction_date = transaction_date;
+
+                var categories = CategoriesTable.GetCategories();
+                var category_find = categories.Find(x => x.label == category);
+                // if the category couldn't be found in the list give it an id of "No Category"
+                this.category_id = category_find != null ? category_find.id : 1;
+
             }
+
+            public ItemsRecord(string location, decimal amount, string category, DateOnly transaction_date) :
+            this(-1, location, amount, category, transaction_date)
+            { }
         }
 
         public static List<ItemsRecord> GetItems()
@@ -49,7 +59,7 @@ namespace Money.Tables
                                 (int)rdr[0], (string)rdr[1],
                                 (decimal)rdr[2],
                                 (int)rdr[3],
-                                (DateTime)rdr[4]
+                                DateOnly.FromDateTime((DateTime)rdr[4])
                             )
                         );
 
@@ -58,9 +68,8 @@ namespace Money.Tables
             }
         }
 
-        public static void InsertItems(List<TransactionRecord> items)
+        public static void InsertItems(List<ItemsRecord> items)
         {
-            var categories = CategoriesTable.GetCategories();
             var locationNames = LocationNamesTable.GetLocationNames();
 
             using (var conn = DatabaseConnection.CreateConnection())
@@ -86,22 +95,48 @@ namespace Money.Tables
 
                     for (int i = 0; i < items.Count; i++)
                     {
-                        var category_find = categories.Find(x => x.label == items[i].Category);
-                        // if the category couldn't be found in the list give it an id of "No Category"
-                        int category_id = category_find != null ? category_find.id : 1;
-
-                        var name_find = locationNames.Find(x => x.provider_name == items[i].Location);
+                        var name_find = locationNames.Find(x => x.provider_name == items[i].location);
                         // if the name is not in the table then use the provided name
-                        string shortName = name_find != null ? name_find.name : items[i].Location;
+                        string shortName = name_find != null ? name_find.name : items[i].location;
 
                         cmd.Parameters["@location"].Value = shortName;
-                        cmd.Parameters["@amount"].Value = items[i].Amount;
-                        cmd.Parameters["@categoryId"].Value = category_id;
-                        cmd.Parameters["@date"].Value = items[i].TransactionDate.ToString("yyyy-MM-dd");
+                        cmd.Parameters["@amount"].Value = items[i].amount;
+                        cmd.Parameters["@categoryId"].Value = items[i].category_id;
+                        cmd.Parameters["@date"].Value = items[i].transaction_date.ToString("yyyy-MM-dd");
                         cmd.ExecuteNonQuery();
                     }
                 }
             }
+        }
+
+        public static void UploadData(Stream stream)
+        {
+            var result = new List<ItemsRecord>();
+
+            using (TextFieldParser parser = new TextFieldParser(stream))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                // gets rid of headers
+                parser.ReadFields();
+
+                while (!parser.EndOfData)
+                {
+                    string[]? columns = parser.ReadFields();
+                    if (columns != null) 
+                    {
+                        decimal amount = 0;
+                        if (string.IsNullOrEmpty(columns[5]) && !string.IsNullOrEmpty(columns[6]))
+                            amount = decimal.Parse(columns[6]);
+                        else if (string.IsNullOrEmpty(columns[6]) && !string.IsNullOrEmpty(columns[5]))
+                            amount = decimal.Parse(columns[5]);
+
+                        result.Add(new ItemsRecord(columns[3], amount, columns[4], DateOnly.Parse(columns[0])));
+                    }
+                }
+            }
+
+            InsertItems(result);
         }
 
         public static void Setup()

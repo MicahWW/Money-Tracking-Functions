@@ -25,10 +25,8 @@ namespace Money.Functions
             {
                 try
                 {
-                    ItemsTable.InsertItems(
-                        CapitalOneTracationRecord.ParseCsv(
-                            await FormProcessing.ReadFormFileAsync(req, "file")
-                        )
+                    ItemsTable.UploadData(
+                        await FormProcessing.ReadFormFileAsync(req, "file")
                     );
                     return new OkObjectResult("done");
                 }

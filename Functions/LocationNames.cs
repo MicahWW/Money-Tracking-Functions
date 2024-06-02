@@ -23,18 +23,19 @@ namespace Money.Functions
                 return new OkObjectResult(LocationNamesTable.GetLocationNames(req.Query["providerName"]));
             else if (req.Method == "POST")
             {
-                try
+                if (req.HasFormContentType)
                 {
-                    LocationNamesTable.InsertItems(
-                        LocationNameRecord.ParseCsv(
-                            await FormProcessing.ReadFormFileAsync(req, "file")
-                        )
-                    );
-                    return new OkObjectResult("done");
-                }
-                catch (FormProcessing.FormProcessingException ex)
-                {
-                    return new ErrorResponse(ex.Message, 515);
+                    try
+                    {
+                        LocationNamesTable.UploadData(
+                                await FormProcessing.ReadFormFileAsync(req, "file")
+                        );
+                        return new OkObjectResult("done");
+                    }
+                    catch (FormProcessing.FormProcessingException ex)
+                    {
+                        return new ErrorResponse(ex.Message, 515);
+                    }
                 }
             }
             return new BadRequestObjectResult("havn't programmed yet");

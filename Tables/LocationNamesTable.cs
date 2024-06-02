@@ -1,23 +1,24 @@
 using Money.Modules;
 using MySql.Data.MySqlClient;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Money.Tables
 {
     public class LocationNamesTable
     {
-        public class LocationnamesRecord
+        public class LocationNamesRecord
         {
             public string provider_name { get; set; }
             public string name { get; set; }
 
-            public LocationnamesRecord(string provider_name, string name)
+            public LocationNamesRecord(string provider_name, string name)
             {
                 this.provider_name = provider_name;
                 this.name = name;
             }
         }
 
-        public static List<LocationnamesRecord> GetLocationNames(string? query = "")
+        public static List<LocationNamesRecord> GetLocationNames(string? query = "")
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
@@ -30,16 +31,16 @@ namespace Money.Tables
 
                     var rdr = cmd.ExecuteReader();
 
-                    var result = new List<LocationnamesRecord>();
+                    var result = new List<LocationNamesRecord>();
                     while (rdr.Read())
-                        result.Add(new LocationnamesRecord((string)rdr[0], (string)rdr[1]));
+                        result.Add(new LocationNamesRecord((string)rdr[0], (string)rdr[1]));
 
                     return result;
                 }
             }
         }
 
-        public static void InsertItems(List<LocationNameRecord> items)
+        public static void InsertItems(List<LocationNamesRecord> items)
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
@@ -62,12 +63,34 @@ namespace Money.Tables
 
                     for (int i = 0; i < items.Count; i++)
                     {
-                        cmd.Parameters["@provider_name"].Value = items[i].ProviderName;
-                        cmd.Parameters["@name"].Value = items[i].ShortName;
+                        cmd.Parameters["@provider_name"].Value = items[i].provider_name;
+                        cmd.Parameters["@name"].Value = items[i].name;
                         cmd.ExecuteNonQuery();
                     }
                 }
             }
+        }
+
+        public static void UploadData(Stream stream)
+        {
+            var result = new List<LocationNamesRecord>();
+
+            using (TextFieldParser parser = new TextFieldParser(stream))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                // gets rid of headers
+                parser.ReadFields();
+
+                while (!parser.EndOfData)
+                {
+                    string[]? columns = parser.ReadFields();
+                    if (columns != null)
+                        result.Add(new LocationNamesRecord(columns[0], columns[1]));
+                }
+            }
+
+            InsertItems(result);
         }
 
         public static void Setup()

@@ -109,31 +109,37 @@ namespace Money.Tables
             }
         }
 
-        public static void UploadData(Stream stream)
+        public static async Task UploadData(Stream stream, string contentType, int contentLength)
         {
+            StringReader sr = await HttpRequestTools.ReadBodyAsync(stream, contentType, contentLength);
+
             var result = new List<ItemsRecord>();
-
-            using (TextFieldParser parser = new TextFieldParser(stream))
+            switch(contentType)
             {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
-                // gets rid of headers
-                parser.ReadFields();
-
-                while (!parser.EndOfData)
-                {
-                    string[]? columns = parser.ReadFields();
-                    if (columns != null) 
+                case "text/csv":
+                    using (TextFieldParser parser = new TextFieldParser(sr))
                     {
-                        decimal amount = 0;
-                        if (string.IsNullOrEmpty(columns[5]) && !string.IsNullOrEmpty(columns[6]))
-                            amount = decimal.Parse(columns[6]);
-                        else if (string.IsNullOrEmpty(columns[6]) && !string.IsNullOrEmpty(columns[5]))
-                            amount = decimal.Parse(columns[5]);
+                        parser.TextFieldType = FieldType.Delimited;
+                        parser.SetDelimiters(",");
+                        // gets rid of headers
+                        parser.ReadFields();
 
-                        result.Add(new ItemsRecord(columns[3], amount, columns[4], DateOnly.Parse(columns[0])));
+                        while (!parser.EndOfData)
+                        {
+                            string[]? columns = parser.ReadFields();
+                            if (columns != null) 
+                            {
+                                decimal amount = 0;
+                                if (string.IsNullOrEmpty(columns[5]) && !string.IsNullOrEmpty(columns[6]))
+                                    amount = decimal.Parse(columns[6]);
+                                else if (string.IsNullOrEmpty(columns[6]) && !string.IsNullOrEmpty(columns[5]))
+                                    amount = decimal.Parse(columns[5]);
+
+                                result.Add(new ItemsRecord(columns[3], amount, columns[4], DateOnly.Parse(columns[0])));
+                            }
+                        }
                     }
-                }
+                    break;
             }
 
             InsertItems(result);

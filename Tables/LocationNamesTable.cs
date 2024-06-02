@@ -71,23 +71,33 @@ namespace Money.Tables
             }
         }
 
-        public static void UploadData(Stream stream)
+        public static async Task UploadData(Stream stream, string contentType, int contentLength)
         {
+            byte[] streamContentBytes = new byte[contentLength];
+            await stream.ReadAsync(streamContentBytes, 0, contentLength);
+            string streamContentString = System.Text.Encoding.Default.GetString(streamContentBytes);
+            StringReader sr = new StringReader(streamContentString);
+            
+
             var result = new List<LocationNamesRecord>();
-
-            using (TextFieldParser parser = new TextFieldParser(stream))
+            switch (contentType)
             {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
-                // gets rid of headers
-                parser.ReadFields();
+                case "text/csv":
+                    using (TextFieldParser parser = new TextFieldParser(sr))
+                    {
+                        parser.TextFieldType = FieldType.Delimited;
+                        parser.SetDelimiters(",");
+                        // gets rid of headers
+                        parser.ReadFields();
 
-                while (!parser.EndOfData)
-                {
-                    string[]? columns = parser.ReadFields();
-                    if (columns != null)
-                        result.Add(new LocationNamesRecord(columns[0], columns[1]));
-                }
+                        while (!parser.EndOfData)
+                        {
+                            string[]? columns = parser.ReadFields();
+                            if (columns != null)
+                                result.Add(new LocationNamesRecord(columns[0], columns[1]));
+                        }
+                    }
+                    break;
             }
 
             InsertItems(result);

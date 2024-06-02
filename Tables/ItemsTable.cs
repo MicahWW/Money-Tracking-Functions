@@ -111,7 +111,7 @@ namespace Money.Tables
 
         public static async Task UploadData(Stream stream, string contentType, int contentLength)
         {
-            StringReader sr = await HttpRequestTools.ReadBodyAsync(stream, contentType, contentLength);
+            StringReader sr = await HttpRequestTools.ReadBodyAsync(stream, contentLength);
 
             var result = new List<ItemsRecord>();
             switch(contentType)

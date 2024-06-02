@@ -1,3 +1,4 @@
+using System.Collections;
 using MySql.Data.MySqlClient;
 
 namespace Money.Modules
@@ -26,10 +27,31 @@ namespace Money.Modules
                 myConnectionString += $"database={SystemVariables.MySqlDatabase}";
 
             conn = new MySqlConnection(myConnectionString);
-            // TODO: error handeling for SQL login errors
-            conn.Open();
+            try
+            {
+                conn.Open();
+            }
+            catch (MySqlException ex)
+            {
+                throw new DatabaseConnectionExecption(ex);
+            }
 
             return conn;
+        }
+
+        public class DatabaseConnectionExecption : Exception
+        {
+            public int MySQLErrorNumber { get; private set; }
+            public string MySQLErrorMessage { get; private set; }
+
+            public DatabaseConnectionExecption(MySqlException ex) : base
+            (
+                $"MySQL error code: {ex.Number} - {ex.Message}"
+            )
+            {
+                this.MySQLErrorNumber = ex.Number;
+                this.MySQLErrorMessage = ex.Message;
+            }
         }
     }
 }

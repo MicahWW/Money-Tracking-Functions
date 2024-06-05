@@ -2,8 +2,11 @@ openapi: 3.0.3
 info:
   title: Money Tracking
   version: 0.0.1
+externalDocs:
+  url: https://github.com/MicahWW/Money-Tracking-Functions
+  description: The GitHub repo for the project this is documenting
 servers:
-  - url: http://http://localhost:7071/api/
+  - url: http://localhost:7071/api/
 tags:
   - name: setup
     description: Setup the database and it's tables
@@ -21,16 +24,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/item'
+              $ref: '#/components/schemas/Item'
           text/csv:
             schema:
-              $ref: '#/components/schemas/item'
+              $ref: '#/components/schemas/Item'
+      responses:
+        '200':
+          description: successful operation
+  /categories:
+    get:
+      summary: Get the listed categories
       responses:
         '200':
           description: successful operation
 components:
   schemas:
-    item:
+    Item:
       required:
         - location
         - amount
@@ -44,10 +53,44 @@ components:
         amount:
           type: number
           example: 9.90
-        category_id:
-          type: integer
-          example: 8
+        category:
+          $ref: '#/components/schemas/Category'
         transaction_date:
           type: string
           example: 1970-01-01
-        
+    Location_Name:
+      required:
+        - provider_name
+        - name
+      type: object
+      properties:
+        provider_name:
+          type: string
+          example: "Chipotle Store #850"
+        name:
+          type: string
+          example: Chipotle
+    Location_Category:
+      required:
+        - location
+        - category_id
+      type: object
+      properties:
+        location:
+          type: string
+          example: Chipotle
+        category:
+          $ref: '#/components/schemas/Category'
+    Category:
+      description: A category from the list provided by the endpoint /categories
+      required:
+        - id
+        - label
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        label:
+          type: string
+          example: Dining

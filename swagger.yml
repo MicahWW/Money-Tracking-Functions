@@ -66,7 +66,7 @@ components:
       properties:
         provider_name:
           type: string
-          example: "Chipotle Store #850"
+          example: "Chipotle Store 0101"
         name:
           type: string
           example: Chipotle

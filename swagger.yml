@@ -1,33 +1,135 @@
 openapi: 3.0.3
 info:
   title: Money Tracking
-  version: 0.0.1
+  version: alpha
 externalDocs:
   url: https://github.com/MicahWW/Money-Tracking-Functions
   description: The GitHub repo for the project this is documenting
 servers:
   - url: http://localhost:7071/api/
 tags:
-  - name: setup
-    description: Setup the database and it's tables
+  - name: Setup
+    description: |
+      A collection of functions that is meant for setting up the database / tables and inserting
+      some temp data.
+
 paths:
-  /items:
-    get:
-      summary: Get all of the items in the database
+  /setup/database:
+    put:
+      summary: Creates the database.
+      description: |
+        If the database does not already exist it will create one defined by the environment
+        variable `mysql-db`.
+      tags:
+        - Setup
       responses:
         '200':
-          description: successful operation
+          description: Database created.
+  /setup/category:
+    put:
+      summary: Creates the Categories table.
+      description: |
+        If the table does not already exist it will create on defined by the environment variable
+        `table-categories`.
+      tags:
+        - Setup
+      responses:
+        '200':
+          description: Table created.
+  /setup/item:
+    put:
+      summary: Creates the Items table.
+      description: |
+        If the table does not already exist it will create on defined by the environment variable
+        `table-expenseItems`.
+      tags:
+        - Setup
+      responses:
+        '200':
+          description: Table created.
+  /setup/location-cateogry:
+    put:
+      summary: Creates the Location Categories table.
+      description: |
+        If the table does not already exist it will create on defined by the environment variable
+        `table-locationCategoryDefaults`.
+      tags:
+        - Setup
+      responses:
+        '200':
+          description: Table created.
+  /setup/location-name:
+    put:
+      summary: Creates the Location Name table.
+      description: |
+        If the table does not already exist it will create on defined by the environment variable
+        `table-locationLongToShortName`.
+      tags:
+        - Setup
+      responses:
+        '200':
+          description: Table created.
+  /setup/temp-data:
+    put:
+      summary: Will insert some data that is useful for quick debugging / development.
+      description: |
+        For the categories & locationNames tables some example data is uploaded for easy debugging
+        and development of the program. If there is already data in one of tables it will skip over
+        that specific one and do the other(s).
+      tags:
+        - Setup
+      responses:
+        '200':
+          description: Data inserted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataInserted'
+  /setup/full:
+    put:
+      summary: Calls all of the functions listed in this setup folder.
+      description: |
+        Runs all of the setup functions, inclusive of adding the example data, in the order that
+        they should be run.
+      tags:
+        - Setup
+      responses:
+        '200':
+          description: Database & tables created with example data inserted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataInserted'
+
+  /items:
+    get:
+      summary: Get all of the items in the database.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
     post:
-      summary: Add a new item(s)
+      summary: Add new item(s)
       requestBody:
+        required: true
         description: Item(s) to upload
         content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Item'
+          # hasn't been implemented
+          # application/json:
+          #   schema:
+          #     type: array
+          #     items:
+          #       $ref: '#/components/schemas/Item'
           text/csv:
             schema:
-              $ref: '#/components/schemas/Item'
+              example: |
+                Transaction Date,Posted Date,Card No.,Description,Category,Debit,Credit
+                1970-01-01,1970-01-01,123456789, Chipotle Store 0101, Dining, 9.90, 0
       responses:
         '200':
           description: successful operation
@@ -36,7 +138,50 @@ paths:
       summary: Get the listed categories
       responses:
         '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+  /location-names:
+    get:
+      summary: Get all of the location names in the database.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location_Name'
+    post:
+      summary: Add new location name(s)
+      requestBody:
+        required: true
+        description: Name(s) to upload
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Location_Name'
+      responses:
+        '200':
           description: successful operation
+  /location-categories:
+    get:
+      summary: Get all of the location categories in the database.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location_Category'
+
 components:
   schemas:
     Item:
@@ -94,3 +239,14 @@ components:
         label:
           type: string
           example: Dining
+    DataInserted:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        locationNames:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location_Name'

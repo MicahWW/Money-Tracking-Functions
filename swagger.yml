@@ -1,21 +1,27 @@
 openapi: 3.0.3
 info:
   title: Money Tracking
+  description: A project to help track how one's money is being spent / moves around.
   version: alpha
 externalDocs:
   url: https://github.com/MicahWW/Money-Tracking-Functions
   description: The GitHub repo for the project this is documenting
 servers:
-  - url: http://localhost:7071/api/
+  - url: http://localhost:7071/api
 tags:
   - name: Setup
     description: |
       A collection of functions that is meant for setting up the database / tables and inserting
       some temp data.
+  - name: Upload Data
+    description: A collection of functions used to upload new data.
+  - name: Get Data
+    description: A collection of functions used to get data stored in the database.
 
 paths:
   /setup/database:
     put:
+      operationId: setupDatabase
       summary: Creates the database.
       description: |
         If the database does not already exist it will create one defined by the environment
@@ -27,6 +33,7 @@ paths:
           description: Database created.
   /setup/category:
     put:
+      operationId: setupCategory
       summary: Creates the Categories table.
       description: |
         If the table does not already exist it will create on defined by the environment variable
@@ -38,6 +45,7 @@ paths:
           description: Table created.
   /setup/item:
     put:
+      operationId: setupItem
       summary: Creates the Items table.
       description: |
         If the table does not already exist it will create on defined by the environment variable
@@ -49,6 +57,7 @@ paths:
           description: Table created.
   /setup/location-cateogry:
     put:
+      operationId: setupLocationCategory
       summary: Creates the Location Categories table.
       description: |
         If the table does not already exist it will create on defined by the environment variable
@@ -60,6 +69,7 @@ paths:
           description: Table created.
   /setup/location-name:
     put:
+      operationId: setupLocationName
       summary: Creates the Location Name table.
       description: |
         If the table does not already exist it will create on defined by the environment variable
@@ -71,6 +81,7 @@ paths:
           description: Table created.
   /setup/temp-data:
     put:
+      operationId: setupTempData
       summary: Will insert some data that is useful for quick debugging / development.
       description: |
         For the categories & locationNames tables some example data is uploaded for easy debugging
@@ -87,6 +98,7 @@ paths:
                 $ref: '#/components/schemas/DataInserted'
   /setup/full:
     put:
+      operationId: setupFull
       summary: Calls all of the functions listed in this setup folder.
       description: |
         Runs all of the setup functions, inclusive of adding the example data, in the order that
@@ -103,7 +115,10 @@ paths:
 
   /items:
     get:
+      operationId: getItems
       summary: Get all of the items in the database.
+      tags:
+        - Get Data
       responses:
         '200':
           description: OK
@@ -114,7 +129,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Item'
     post:
+      operationId: createNewItem(s)
       summary: Add new item(s)
+      tags:
+        - Upload Data
       requestBody:
         required: true
         description: Item(s) to upload
@@ -135,7 +153,10 @@ paths:
           description: successful operation
   /categories:
     get:
+      operationId: getCategories
       summary: Get the listed categories
+      tags:
+        - Get Data
       responses:
         '200':
           description: OK
@@ -147,7 +168,10 @@ paths:
                   $ref: '#/components/schemas/Category'
   /location-names:
     get:
+      operationId: getLocationNames
       summary: Get all of the location names in the database.
+      tags:
+        - Get Data
       responses:
         '200':
           description: OK
@@ -158,7 +182,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Location_Name'
     post:
+      operationId: createNewLocationName(s)
       summary: Add new location name(s)
+      tags:
+        - Upload Data
       requestBody:
         required: true
         description: Name(s) to upload
@@ -173,7 +200,10 @@ paths:
           description: successful operation
   /location-categories:
     get:
+      operationId: getLocationCategories
       summary: Get all of the location categories in the database.
+      tags:
+        - Get Data
       responses:
         '200':
           description: OK
@@ -185,6 +215,7 @@ paths:
 components:
   schemas:
     Item:
+      description: A singular money item stored in the database
       required:
         - location
         - amount
@@ -202,8 +233,9 @@ components:
           $ref: '#/components/schemas/Category'
         transaction_date:
           type: string
-          example: 1970-01-01
+          example: "1970-01-01"
     Location_Name:
+      description: A singular location name stored in the database
       required:
         - provider_name
         - name
@@ -216,6 +248,7 @@ components:
           type: string
           example: Chipotle
     Location_Category:
+      description: A singular location category stored in the database
       required:
         - location
         - category_id

@@ -20,7 +20,7 @@ namespace Money.Setup
         {
             LocationNamesTable.Setup();
 
-            return new OkObjectResult("Location name table created");
+            return new OkObjectResult("");
         }
     }
 }

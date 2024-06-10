@@ -20,7 +20,7 @@ namespace Money.Setup
         {
             LocationCategoryTable.Setup();
 
-            return new OkObjectResult("Location categories setup");
+            return new OkObjectResult("");
         }
     }
 }

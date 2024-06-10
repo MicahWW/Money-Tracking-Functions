@@ -219,7 +219,7 @@ components:
       required:
         - location
         - amount
-        - category_id
+        - category
         - transaction_date
       type: object
       properties:
@@ -251,7 +251,7 @@ components:
       description: A singular location category stored in the database
       required:
         - location
-        - category_id
+        - category
       type: object
       properties:
         location:

@@ -42,7 +42,29 @@ namespace Money.Tables
             { }
         }
 
-        public static List<ItemsRecord> GetItems()
+        public class ItemsReturnRecord
+        {
+            public int id { get; set; }
+            public string location { get; set; }
+            public decimal amount { get; set; }
+            public CategoriesTable.CategoriesRecord category { get; set; }
+            public DateOnly transaction_date { get; set; }
+
+            public ItemsReturnRecord(int id, string location, decimal amount, int category_id, DateOnly trancation_date)
+            {
+                this.id = id;
+                this.location = location;
+                this.amount = amount;
+                this.transaction_date = trancation_date;
+                List<CategoriesTable.CategoriesRecord> temp = CategoriesTable.GetCategories(category_id.ToString());
+                if (temp.Count == 1 && temp[0] != null)
+                    this.category = temp[0];
+                else
+                    this.category = new CategoriesTable.CategoriesRecord(0, "error");
+            }
+        }
+
+        public static List<ItemsReturnRecord> GetItems()
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
@@ -52,11 +74,12 @@ namespace Money.Tables
 
                     var rdr = cmd.ExecuteReader();
 
-                    var result = new List<ItemsRecord>();
+                    var result = new List<ItemsReturnRecord>();
                     while (rdr.Read())
                         result.Add(
-                            new ItemsRecord(
-                                (int)rdr[0], (string)rdr[1],
+                            new ItemsReturnRecord(
+                                (int)rdr[0],
+                                (string)rdr[1],
                                 (decimal)rdr[2],
                                 (int)rdr[3],
                                 DateOnly.FromDateTime((DateTime)rdr[4])

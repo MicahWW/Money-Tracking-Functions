@@ -157,6 +157,12 @@ paths:
       summary: Get the listed categories
       tags:
         - Get Data
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: The specific id to lookup
       responses:
         '200':
           description: OK

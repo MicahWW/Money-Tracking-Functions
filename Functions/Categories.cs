@@ -18,7 +18,10 @@ namespace Money.Functions
         [Function("Categories")]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "categories")] HttpRequest req)
         {
-            return new OkObjectResult(CategoriesTable.GetCategories());
+            if (!string.IsNullOrEmpty(req.Query["id"]))
+                return new OkObjectResult(CategoriesTable.GetCategories(req.Query["id"]));
+            else
+                return new OkObjectResult(CategoriesTable.GetCategories());
         }
     }
 }

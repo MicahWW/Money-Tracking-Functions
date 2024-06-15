@@ -17,13 +17,15 @@ namespace Money.Tables
             }
         }
 
-        public static List<CategoriesRecord> GetCategories()
+        public static List<CategoriesRecord> GetCategories(string? id=null)
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
                 using (var cmd = new MySqlCommand("", conn))
                 {
                     cmd.CommandText = $"SELECT * FROM {SystemVariables.TableCategories}";
+                    if (!string.IsNullOrEmpty(id))
+                        cmd.CommandText += $" WHERE id = {id}";
 
                     var rdr = cmd.ExecuteReader();
 

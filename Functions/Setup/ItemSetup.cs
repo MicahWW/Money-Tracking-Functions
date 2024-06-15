@@ -20,7 +20,7 @@ namespace Money.Setup
         {
             ItemsTable.Setup();
 
-            return new OkObjectResult("Item table setup");
+            return new OkObjectResult("");
         }
     }
 }

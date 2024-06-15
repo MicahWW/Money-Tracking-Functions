@@ -4,6 +4,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using Money.Modules;
+using Money.Tables;
 
 namespace Money.Setup
 {
@@ -19,12 +20,10 @@ namespace Money.Setup
         [Function("InsertTempData")]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/temp-data")] HttpRequest req)
         {
-            Setup();
-
-            return new OkObjectResult("done");
+            return new OkObjectResult(Setup());
         }
 
-        public static void Setup()
+        public static Dictionary<string, dynamic> Setup()
         {
             var categories = new List<string> {
                 "No Category",
@@ -49,6 +48,8 @@ namespace Money.Setup
                 {"RAISING CANES 0098", "Raising Canes"}
             };
 
+            var httpResult = new Dictionary<string, dynamic>();
+
             using (var conn = DatabaseConnection.CreateConnection())
             {
                 using (var cmd = new MySqlCommand("", conn))
@@ -70,6 +71,12 @@ namespace Money.Setup
                             cmd.Parameters["@label"].Value = categories[i];
                             cmd.ExecuteNonQuery();
                         }
+
+                        httpResult.Add("categories", categories);
+                    }
+                    else
+                    {
+                        httpResult.Add("categories", "data already present");
                     }
 
                     var table_locationLongToShortName = SystemVariables.TableLocationNames;
@@ -88,9 +95,17 @@ namespace Money.Setup
                             cmd.Parameters["@name"].Value = entry.Value;
                             cmd.ExecuteNonQuery();
                         }
+
+                        httpResult.Add("locationNames", locationNames);
+                    }
+                    else
+                    {
+                        httpResult.Add("locationNames", "data already present");
                     }
                 }
             }
+
+            return httpResult;
         }
     }
 }

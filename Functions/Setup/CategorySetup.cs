@@ -20,7 +20,7 @@ namespace Money.Setup
         {
             CategoriesTable.Setup();
 
-            return new OkObjectResult("categories setup");
+            return new OkObjectResult("");
         }
     }
 }

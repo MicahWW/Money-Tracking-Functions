@@ -34,7 +34,7 @@ namespace Money.Setup
         {
             Setup();
 
-            return new OkObjectResult("database setup");
+            return new OkObjectResult("");
         }
     }
 }

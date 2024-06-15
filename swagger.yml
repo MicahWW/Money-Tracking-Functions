@@ -201,6 +201,11 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/Location_Name'
+          text/csv:
+            schema:
+              example: |
+                Provider_Name,Short_Name
+                Chipotle Store 0101, Chipotle
       responses:
         '200':
           description: successful operation
@@ -210,6 +215,34 @@ paths:
       summary: Get all of the location categories in the database.
       tags:
         - Get Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location_Category'
+
+  /visualize:
+    get:
+      operationId: visulaization
+      summary: Get data in a format that works with the plotly visuals
+      tags:
+        - Get Data
+      parameters:
+        - in: query
+          name: type
+          description: The type of visual that the data will be put in.
+          required: true
+          schema:
+            type: string
+          examples:
+            sunburst:
+              summary: Get data for a sunburst chart
+              value: sunburst
+            pie:
+              summary: Get data for a pie chart
+              value: pie
       responses:
         '200':
           description: OK

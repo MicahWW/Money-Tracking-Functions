@@ -188,6 +188,12 @@ paths:
       summary: Get all of the location names in the database.
       tags:
         - Get Data
+      parameters:
+        - in: query
+          name: providerName
+          schema:
+            type: string
+          description: The provider name match to lookup
       responses:
         '200':
           description: OK

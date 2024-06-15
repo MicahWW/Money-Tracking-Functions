@@ -23,7 +23,10 @@ namespace Money.Functions
             switch (req.Method)
             {
                 case "GET":
-                    return new OkObjectResult(LocationNamesTable.GetLocationNames(req.Query["providerName"]));
+                    if (!string.IsNullOrEmpty(req.Query["providerName"]))
+                        return new OkObjectResult(LocationNamesTable.GetLocationNames(req.Query["providerName"]));
+                    else
+                        return new OkObjectResult(LocationNamesTable.GetLocationNames());
                 case "POST":
                     try
                     {
@@ -37,7 +40,6 @@ namespace Money.Functions
                                 {
                                     "count",
                                     await LocationNamesTable.UploadData(req.Body, req.ContentType, (int)req.ContentLength)
-
                                 }
                             }
                         );

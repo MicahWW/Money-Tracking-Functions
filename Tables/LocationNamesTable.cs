@@ -22,7 +22,7 @@ namespace Money.Tables
             }
         }
 
-        public static List<LocationNamesRecord> GetLocationNames(string? query = "")
+        public static List<LocationNamesRecord> GetLocationNames(string? query = null)
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {

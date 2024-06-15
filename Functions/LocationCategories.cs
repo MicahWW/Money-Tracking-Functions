@@ -18,7 +18,7 @@ namespace Money.Functions
         [Function("LocationCategories")]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "location-categories")] HttpRequest req)
         {
-            return new OkObjectResult(LocationCategoryTable.GetLocationCategories(req.Query["locationName"]));
+            return new OkObjectResult(LocationCategoryTable.GetLocationCategories());
         }
     }
 }

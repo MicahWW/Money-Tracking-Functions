@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Money.Modules;
 using Money.Tables;
 
 namespace Money.Functions
@@ -18,17 +19,21 @@ namespace Money.Functions
         [Function("Items")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "items")] HttpRequest req)
         {
-            if (req.Method == "GET")
-                return new OkObjectResult(ItemsTable.GetItems());
-            else if (req.Method == "POST")
+            switch(req.Method)
             {
-                if (req.ContentType != null && req.ContentLength != null)
-                {
+                case "GET":
+                    return new OkObjectResult(ItemsTable.GetItems());
+                case "POST":
+                    if (req.ContentType == null)
+                        return new ErrorResponse("ContentType is null", 515);
+                    if (req.ContentLength == null)
+                        return new ErrorResponse("ContentLength is null", 515);
+
                     await ItemsTable.UploadData(req.Body, req.ContentType, (int)req.ContentLength);
                     return new OkObjectResult("yay");
-                }
+                default:
+                    return new ErrorResponse($"{req.Method} has not been implemented", 515);
             }
-            return new BadRequestObjectResult("havn't programmed yet");
         }
     }
 }

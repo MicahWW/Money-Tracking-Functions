@@ -44,7 +44,7 @@ namespace Money.Tables
             }
         }
 
-        public static void InsertItems(List<LocationNamesRecord> items)
+        public static int InsertItems(List<LocationNamesRecord> items)
         {
             using (var conn = DatabaseConnection.CreateConnection())
             {
@@ -71,11 +71,13 @@ namespace Money.Tables
                         cmd.Parameters["@name"].Value = items[i].name;
                         cmd.ExecuteNonQuery();
                     }
+
+                    return items.Count;
                 }
             }
         }
 
-        public static async Task UploadData(Stream stream, string contentType, int contentLength)
+        public static async Task<int> UploadData(Stream stream, string contentType, int contentLength)
         {
             var result = new List<LocationNamesRecord>();
             switch (contentType)
@@ -110,7 +112,7 @@ namespace Money.Tables
                     break;
             }
 
-            InsertItems(result);
+            return InsertItems(result);
         }
 
         public static void Setup()

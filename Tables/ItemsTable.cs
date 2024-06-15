@@ -91,7 +91,7 @@ namespace Money.Tables
             }
         }
 
-        public static void InsertItems(List<ItemsRecord> items)
+        public static int InsertItems(List<ItemsRecord> items)
         {
             var locationNames = LocationNamesTable.GetLocationNames();
 
@@ -130,9 +130,11 @@ namespace Money.Tables
                     }
                 }
             }
+
+            return items.Count;
         }
 
-        public static async Task UploadData(Stream stream, string contentType, int contentLength)
+        public static async Task<int> UploadData(Stream stream, string contentType, int contentLength)
         {
             StringReader sr = await HttpRequestTools.ReadBodyAsync(stream, contentLength);
 
@@ -165,7 +167,7 @@ namespace Money.Tables
                     break;
             }
 
-            InsertItems(result);
+            return InsertItems(result);
         }
 
         public static void Setup()

@@ -20,24 +20,29 @@ namespace Money.Functions
         [Function("LocationNames")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "location-names")] HttpRequest req)
         {
-            if (req.Method == "GET")
-                return new OkObjectResult(LocationNamesTable.GetLocationNames(req.Query["providerName"]));
-            else if (req.Method == "POST")
+            switch (req.Method)
             {
-                try
-                {
-                    if (req.ContentType != null && req.ContentLength != null)
+                case "GET":
+                    return new OkObjectResult(LocationNamesTable.GetLocationNames(req.Query["providerName"]));
+                case "POST":
+                    try
                     {
-                        await LocationNamesTable.UploadData(req.Body, req.ContentType, (int)req.ContentLength);
-                        return new OkObjectResult("yay");
+                        if (req.ContentType == null)
+                            return new ErrorResponse("ContentType is null", 515);
+                        if (req.ContentLength == null)
+                            return new ErrorResponse("ContentLength is null", 515);
+
+                        return new OkObjectResult(
+                            await LocationNamesTable.UploadData(req.Body, req.ContentType, (int)req.ContentLength)
+                        );
                     }
-                }
-                catch (JsonException ex)
-                {
-                    return new ErrorResponse($"JSON parse error on line {ex.LineNumber}", 515);
-                }
+                    catch (JsonException ex)
+                    {
+                        return new ErrorResponse($"JSON parse error on line {ex.LineNumber}", 515);
+                    }
+                default:
+                    return new ErrorResponse($"{req.Method} has not been implemented", 515);
             }
-            return new BadRequestObjectResult("havn't programmed yet");
         }
     }
 }

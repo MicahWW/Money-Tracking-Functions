@@ -29,8 +29,9 @@ namespace Money.Functions
                     if (req.ContentLength == null)
                         return new ErrorResponse("ContentLength is null", 515);
 
-                    await ItemsTable.UploadData(req.Body, req.ContentType, (int)req.ContentLength);
-                    return new OkObjectResult("yay");
+                    return new OkObjectResult(
+                        await ItemsTable.UploadData(req.Body, req.ContentType, (int)req.ContentLength)
+                    );
                 default:
                     return new ErrorResponse($"{req.Method} has not been implemented", 515);
             }

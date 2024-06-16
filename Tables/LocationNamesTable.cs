@@ -180,5 +180,39 @@ namespace Money.Tables
                 }
             }
         }
+
+        public static List<string> MissingLocationNames()
+        {
+            var result = new List<string>();
+            using (var conn = DatabaseConnection.CreateConnection())
+            {
+                using (var cmd = new MySqlCommand("", conn))
+                {
+                    cmd.CommandText = 
+                        "SELECT " +
+                        "  location " +
+                        "FROM " +
+                        $"  {SystemVariables.TableExpenseItems} " +
+                        "WHERE " +
+                        "  location " +
+                        "NOT IN " +
+                        "( " +
+                        "  SELECT " +
+                        "    name " +
+                        "  FROM " +
+                        $"    {SystemVariables.TableLocationNames} " +
+                        ")";
+                    var rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        result.Add((string)rdr[0]);
+                    }
+
+                }
+            }
+
+            return result;
+        }
     }
 }

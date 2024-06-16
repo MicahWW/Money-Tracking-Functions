@@ -44,20 +44,42 @@ namespace Money.Tables
             }
         }
 
-        public static int InsertItems(List<LocationNamesRecord> items)
+        public static Dictionary<string, Dictionary<string, dynamic>> InsertItems(List<LocationNamesRecord> items, bool overwrite=false)
         {
+            var result = new Dictionary<string, Dictionary<string, dynamic>>
+            {
+                { "items_added", new Dictionary<string, dynamic>
+                    {
+                        { "count", 0 },
+                        { "items", new List<LocationNamesRecord>() }
+                    }
+                },
+                {"items_overwritten", new Dictionary<string, dynamic>
+                    {
+                        { "count", 0 },
+                        { "items", new List<LocationNamesRecord>() }
+                    }
+                },
+                {"items_skipped", new Dictionary<string, dynamic>
+                    {
+                        { "count", 0 },
+                        { "items", new List<LocationNamesRecord>() }
+                    }
+                }
+            };
+
             using (var conn = DatabaseConnection.CreateConnection())
             {
                 using (var cmd = new MySqlCommand("", conn))
                 {
                     var table_locationNames = SystemVariables.TableLocationNames;
 
-                    // for now this is just meant as a one time upload
-                    cmd.CommandText = $"DELETE FROM {table_locationNames}";
-                    cmd.ExecuteNonQuery();
-
-                    cmd.CommandText =
-                        $"INSERT INTO {table_locationNames} " +
+                    if (overwrite)
+                        cmd.CommandText = "REPLACE ";
+                    else
+                        cmd.CommandText = "INSERT ";
+                    cmd.CommandText +=
+                        $"INTO {table_locationNames} " +
                         "  (provider_name, name) " +
                         "VALUES " +
                         "  (@provider_name, @name)";
@@ -69,15 +91,40 @@ namespace Money.Tables
                     {
                         cmd.Parameters["@provider_name"].Value = items[i].provider_name;
                         cmd.Parameters["@name"].Value = items[i].name;
-                        cmd.ExecuteNonQuery();
+                        try
+                        {
+                            int affected_rows = cmd.ExecuteNonQuery();
+                            if (affected_rows == 1)
+                            {
+                                result["items_added"]["count"] += 1;
+                                result["items_added"]["items"].Add(new LocationNamesRecord(items[i].provider_name, items[i].name));
+                            }
+                            else if (affected_rows == 2)
+                            {
+                                result["items_overwritten"]["count"] += 1;
+                                result["items_overwritten"]["items"].Add(new LocationNamesRecord(items[i].provider_name, items[i].name));
+                            }
+                        }
+                        catch (MySqlException ex)
+                        {
+                            // only care about SQL error code 1062 as it means a duplicate entry.
+                            // https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html#error_er_dup_entry
+                            if (ex.Number == 1062)
+                            {
+                                result["items_skipped"]["count"] += 1;
+                                result["items_skipped"]["items"].Add(new LocationNamesRecord(items[i].provider_name, items[i].name));
+                            }
+                            else
+                                throw;
+                        }
                     }
 
-                    return items.Count;
+                    return result;
                 }
             }
         }
 
-        public static async Task<int> UploadData(Stream stream, string contentType, int contentLength)
+        public static async Task<Dictionary<string, Dictionary<string, dynamic>>> UploadData(Stream stream, string contentType, int contentLength, bool overwrite)
         {
             var result = new List<LocationNamesRecord>();
             switch (contentType)
@@ -112,7 +159,7 @@ namespace Money.Tables
                     break;
             }
 
-            return InsertItems(result);
+            return InsertItems(result, overwrite);
         }
 
         public static void Setup()

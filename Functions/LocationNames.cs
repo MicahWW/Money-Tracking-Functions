@@ -35,14 +35,10 @@ namespace Money.Functions
                         if (req.ContentLength == null)
                             return new ErrorResponse("ContentLength is null", 515);
 
-                        return new OkObjectResult( new Dictionary<string, int>
-                            {
-                                {
-                                    "count",
-                                    await LocationNamesTable.UploadData(req.Body, req.ContentType, (int)req.ContentLength)
-                                }
-                            }
-                        );
+                        if (string.Compare("true", req.Query["overwrite"], true) == 0)
+                            return new OkObjectResult(await LocationNamesTable.UploadData(req.Body, req.ContentType, (int)req.ContentLength, true));
+                        else
+                            return new OkObjectResult(await LocationNamesTable.UploadData(req.Body, req.ContentType, (int)req.ContentLength, false));
                     }
                     catch (JsonException ex)
                     {

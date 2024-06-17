@@ -208,6 +208,12 @@ paths:
       summary: Add new location name(s)
       tags:
         - Upload Data
+      parameters:
+        - in: query
+          name: overwrite
+          schema:
+            type: boolean
+          description: If one of the given items is found in the database should it be overwritten with the new value, defaults to false.
       requestBody:
         required: true
         description: Name(s) to upload
@@ -230,10 +236,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  count:
-                    description: A count of the items uploaded
-                    type: integer
-                    example: 1
+                  items_added:
+                    $ref: '#/components/schemas/LocationNameUploadResult'
+                  items_overwritten:
+                    $ref: '#/components/schemas/LocationNameUploadResult'
+                  items_skipped:
+                    $ref: '#/components/schemas/LocationNameUploadResult'
   /location-categories:
     get:
       operationId: getLocationCategories
@@ -275,6 +283,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Location_Category'
+  /missing-location-names:
+    get:
+      operationId: missingLocationNames
+      summary: Get a list of location names that are in the items table but not in the location names list
+      tags:
+        - Get Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: Chipotle 0101
 
 components:
   schemas:
@@ -347,3 +371,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Location_Name'
+    LocationNameUploadResult:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 1
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Location_Name"

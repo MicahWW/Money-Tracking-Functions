@@ -283,6 +283,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Location_Category'
+  /missing-location-names:
+    get:
+      operationId: missingLocationNames
+      summary: Get a list of location names that are in the items table but not in the location names list
+      tags:
+        - Get Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: Chipotle 0101
 
 components:
   schemas:

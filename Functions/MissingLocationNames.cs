@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -17,7 +16,7 @@ namespace Money.Functions
         }
 
         [Function("MissingLocationNames")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "missing-location-names")] HttpRequest req)
         {
             return new OkObjectResult(LocationNamesTable.MissingLocationNames());
         }

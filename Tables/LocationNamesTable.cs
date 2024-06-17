@@ -190,18 +190,18 @@ namespace Money.Tables
                 {
                     cmd.CommandText = 
                         "SELECT " +
-                        "  location " +
+                        "  DISTINCT location " +
                         "FROM " +
                         $"  {SystemVariables.TableExpenseItems} " +
                         "WHERE " +
-                        "  location " +
-                        "NOT IN " +
-                        "( " +
-                        "  SELECT " +
-                        "    name " +
-                        "  FROM " +
-                        $"    {SystemVariables.TableLocationNames} " +
-                        ")";
+                        "  location NOT IN (" +
+                        "    SELECT " +
+                        "      name " +
+                        "    FROM " +
+                        $"      {SystemVariables.TableLocationNames} " +
+                        "  ) " +
+                        "ORDER BY " +
+                        "  location";
                     var rdr = cmd.ExecuteReader();
 
                     while (rdr.Read())

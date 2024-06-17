@@ -8,11 +8,11 @@ using MySql.Data.MySqlClient;
 
 namespace Money.Function
 {
-    public class Visualize
+    public class VisualizeSpending
     {
-        private readonly ILogger<Visualize> _logger;
+        private readonly ILogger<VisualizeSpending> _logger;
 
-        public Visualize(ILogger<Visualize> logger)
+        public VisualizeSpending(ILogger<VisualizeSpending> logger)
         {
             _logger = logger;
         }
@@ -37,7 +37,7 @@ namespace Money.Function
                 DateOnly lastDate = DateOnly.Parse(endDate);
 
 
-                whereDateRange = $"WHERE transaction_date BETWEEN '{beginDate:yyyy-MM-dd}' AND '{lastDate:yyyy-MM-dd}' ";
+                whereDateRange = $"AND transaction_date BETWEEN '{beginDate:yyyy-MM-dd}' AND '{lastDate:yyyy-MM-dd}' ";
             }
 
             var categories = CategoriesTable.GetCategories();
@@ -50,9 +50,11 @@ namespace Money.Function
                     {
                         cmd.CommandText =
                             "SELECT " +
-                            "  location, category_id, SUM(amount), COUNT(*) " +
+                            "  location, category_id, SUM(amount) * -1, COUNT(*) " +
                             "FROM " +
                             $"  {SystemVariables.TableExpenseItems} " +
+                            "WHERE " +
+                            "  amount < 0 " +
                             whereDateRange +
                             "GROUP BY " +
                             "  location, category_id";

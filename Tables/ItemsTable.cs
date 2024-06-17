@@ -158,7 +158,7 @@ namespace Money.Tables
                                 if (string.IsNullOrEmpty(columns[5]) && !string.IsNullOrEmpty(columns[6]))
                                     amount = decimal.Parse(columns[6]);
                                 else if (string.IsNullOrEmpty(columns[6]) && !string.IsNullOrEmpty(columns[5]))
-                                    amount = decimal.Parse(columns[5]);
+                                    amount = decimal.Parse(columns[5]) * -1;
 
                                 result.Add(new ItemsRecord(columns[3], amount, columns[4], DateOnly.Parse(columns[0])));
                             }

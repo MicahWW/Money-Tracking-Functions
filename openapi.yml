@@ -256,9 +256,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Location_Category'
 
-  /visualize:
+  /visualize-spending:
     get:
-      operationId: visulaization
+      operationId: visualizeSpending
       summary: Get data in a format that works with the plotly visuals
       tags:
         - Get Data

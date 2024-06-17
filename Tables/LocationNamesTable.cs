@@ -205,13 +205,9 @@ namespace Money.Tables
                     var rdr = cmd.ExecuteReader();
 
                     while (rdr.Read())
-                    {
                         result.Add((string)rdr[0]);
-                    }
-
                 }
             }
-
             return result;
         }
     }

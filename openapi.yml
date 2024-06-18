@@ -237,11 +237,11 @@ paths:
                 type: object
                 properties:
                   items_added:
-                    $ref: '#/components/schemas/LocationNameUploadResult'
+                    $ref: '#/components/schemas/Location_Name_Upload_Result'
                   items_overwritten:
-                    $ref: '#/components/schemas/LocationNameUploadResult'
+                    $ref: '#/components/schemas/Location_Name_Upload_Result'
                   items_skipped:
-                    $ref: '#/components/schemas/LocationNameUploadResult'
+                    $ref: '#/components/schemas/Location_Name_Upload_Result'
   /location-categories:
     get:
       operationId: getLocationCategories
@@ -371,7 +371,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Location_Name'
-    LocationNameUploadResult:
+    Location_Name_Upload_Result:
       type: object
       properties:
         count:

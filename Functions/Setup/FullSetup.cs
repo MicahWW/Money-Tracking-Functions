@@ -2,10 +2,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using Money.Functions;
 using Money.Tables;
 
-namespace Money.Setup
+namespace Money.Functions.Setup
 {
     public class FullSetup
     {

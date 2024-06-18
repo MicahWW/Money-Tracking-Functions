@@ -255,6 +255,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Location_Category'
+  /all-tables:
+    get:
+      operationId: getAllTables
+      summary: Gets data from all of the tables in the database in 1 call
+      tags:
+        - Get Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/All_Tables'
 
   /visualize-spending:
     get:
@@ -381,3 +394,22 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Location_Name"
+    All_Tables:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        locationNames:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location_Name'
+        locationCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location_Category'

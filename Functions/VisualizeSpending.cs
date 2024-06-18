@@ -20,6 +20,7 @@ namespace Money.Function
         [Function("Visualize")]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "visualize")] HttpRequest req)
         {
+            #region Check query parameters
             string? type = req.Query["type"];
             string? startDate = req.Query["startDate"];
             string? endDate = req.Query["endDate"];
@@ -31,14 +32,16 @@ namespace Money.Function
                 return new ErrorResponse("An end date was given with no start date.", 515);
             if (string.IsNullOrEmpty(endDate) && !string.IsNullOrEmpty(startDate))
                 return new ErrorResponse("A start date was given with no end date.", 515);
+
+            // adds the option to search within a date range
             if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
             {
                 DateOnly beginDate = DateOnly.Parse(startDate);
                 DateOnly lastDate = DateOnly.Parse(endDate);
 
-
                 whereDateRange = $"AND transaction_date BETWEEN '{beginDate:yyyy-MM-dd}' AND '{lastDate:yyyy-MM-dd}' ";
             }
+            #endregion Check query parameters
 
             var categories = CategoriesTable.GetCategories();
 
@@ -46,8 +49,15 @@ namespace Money.Function
             {
                 using (var cmd = new MySqlCommand("", conn))
                 {
-                    if ( string.Compare(type, "sunburst", true) == 0 || string.Compare(type, "pie", true) == 0)
+                    // pie charts and sunburst charts use the same data, execpt
+                    // pie doesn't need the categories.
+                    if (string.Compare(type, "sunburst", true) == 0 ||
+                        string.Compare(type, "pie", true) == 0)
                     {
+                        // Gets all of the items in the ExpenseItems table that
+                        // are a negative value (items where money was spent, 
+                        // not recieved) grouped by the location and category.
+                        // The amount is made postive so it can be dispalyed.
                         cmd.CommandText =
                             "SELECT " +
                             "  location, category_id, SUM(amount) * -1, COUNT(*) " +
@@ -55,6 +65,7 @@ namespace Money.Function
                             $"  {SystemVariables.TableExpenseItems} " +
                             "WHERE " +
                             "  amount < 0 " +
+                            // adds the optional date restriction
                             whereDateRange +
                             "GROUP BY " +
                             "  location, category_id";
@@ -64,6 +75,7 @@ namespace Money.Function
                         var result = new List<VisualizeRecord>();
 
                         // this adds the categories for the items to leaf off of
+                        // in the sunburst chart
                         categories.ForEach(x =>
                         {
                             result.Add(new VisualizeRecord(x.label));

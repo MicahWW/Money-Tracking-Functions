@@ -34,7 +34,7 @@ paths:
   /setup/category:
     put:
       operationId: setupCategory
-      summary: Creates the Categories table.
+      summary: Creates the Categories table and inserts the categories.
       description: |
         If the table does not already exist it will create on defined by the environment variable
         `table-categories` and then add a list of categories to the table.
@@ -81,10 +81,10 @@ paths:
           description: Table created.
   /setup/insert-examples:
     put:
-      operationId: setupTempData
-      summary: Will insert some data that is useful for quick debugging / development.
+      operationId: insertExampleData
+      summary: Inserts example data that is useful for quick debugging / development.
       description: |
-        For the categories & locationNames tables some example data is uploaded for easy debugging
+        For the locationNames & items tables some example data is uploaded for easy debugging
         and development of the program. If there is already data in one of tables it will skip over
         that specific one and do the other(s).
       tags:
@@ -105,6 +105,12 @@ paths:
         they should be run.
       tags:
         - Setup
+      parameters:
+        - in: query
+          name: insertData
+          schema:
+            type: boolean
+          description: Toggles weather to insert the data from /setup/insert-examples or not.
       responses:
         '200':
           description: Database & tables created with example data inserted

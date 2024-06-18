@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Money.Functions;
 using Money.Tables;
 
 namespace Money.Setup
@@ -23,9 +24,11 @@ namespace Money.Setup
             LocationNamesTable.Setup();
             LocationCategoryTable.Setup();
             ItemsTable.Setup();
-            var result = InsertTempData.Setup();
 
-            return new OkObjectResult(result);
+            if (req.Query["insertData"] != "false")
+                return new OkObjectResult(InsertTempData.Setup());
+            else
+                return new OkObjectResult(AllTables.GetAllTables());
         }
     }
 }

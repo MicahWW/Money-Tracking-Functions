@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using Money.Modules;
 using Money.Tables;
+using Money.Functions;
 
 namespace Money.Setup
 {
@@ -23,6 +24,12 @@ namespace Money.Setup
             return new OkObjectResult(Setup());
         }
 
+        /// <summary>
+        /// Adds some example data to the database
+        /// </summary>
+        /// <returns>
+        /// The state of the tables after calling the function
+        /// </returns>
         public static Dictionary<string, dynamic> Setup()
         {
             var categories = new List<string> {
@@ -45,15 +52,34 @@ namespace Money.Setup
                 {"CHIPOTLE 0101", "Chipotle"},
                 {"CHIPOTLE 3992", "Chipotle"},
                 {"RAISING CANES 0081", "Raising Canes"},
-                {"RAISING CANES 0098", "Raising Canes"}
+                {"RAISING CANES 0098", "Raising Canes"},
+                {"Example Store Location 54321", "Example Store"},
+                {"Example Store Location 12345", "Example Store"}
             };
 
-            var httpResult = new Dictionary<string, dynamic>();
+            var items = new List<ItemsTable.ItemsRecord>
+            {
+                new ItemsTable.ItemsRecord
+                (
+                    "Example Store Location 54321",
+                    (decimal)15.89,
+                    categories[0],
+                    DateOnly.Parse("1970-01-01")
+                ),
+                new ItemsTable.ItemsRecord
+                (
+                    "Example Store Location 12345",
+                    (decimal)42.09,
+                    categories[0],
+                    DateOnly.Parse("1970-01-01")
+                )                
+            };
 
             using (var conn = DatabaseConnection.CreateConnection())
             {
                 using (var cmd = new MySqlCommand("", conn))
                 {
+                    #region Categories
                     var table_categories = SystemVariables.TableCategories;
 
                     cmd.CommandText = $"SELECT COUNT(*) FROM {table_categories}";
@@ -71,16 +97,11 @@ namespace Money.Setup
                             cmd.Parameters["@label"].Value = categories[i];
                             cmd.ExecuteNonQuery();
                         }
-
-                        httpResult.Add("categories", categories);
                     }
-                    else
-                    {
-                        httpResult.Add("categories", "data already present");
-                    }
-
+                    #endregion Categories
+                    #region Location Names
                     var table_locationLongToShortName = SystemVariables.TableLocationNames;
-                    cmd.CommandText = $"Select COUNT(*) FROM {table_locationLongToShortName}";
+                    cmd.CommandText = $"SELECT COUNT(*) FROM {table_locationLongToShortName}";
                     result = cmd.ExecuteScalar();
                     if (!(result != null && Convert.ToInt32(result) > 0))
                     {
@@ -95,17 +116,20 @@ namespace Money.Setup
                             cmd.Parameters["@name"].Value = entry.Value;
                             cmd.ExecuteNonQuery();
                         }
-
-                        httpResult.Add("locationNames", locationNames);
                     }
-                    else
+                    #endregion Location Names
+                    #region Items
+                    var table_items = SystemVariables.TableExpenseItems;
+                    cmd.CommandText = $"SELECT COUNT(*) FROM {table_items}";
+                    result = cmd.ExecuteScalar();
+                    if (!(result != null && Convert.ToInt32(result) > 0))
                     {
-                        httpResult.Add("locationNames", "data already present");
+                        ItemsTable.InsertItems(items);
                     }
+                    #endregion Items
                 }
             }
-
-            return httpResult;
+            return AllTables.GetAllTables();
         }
     }
 }

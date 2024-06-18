@@ -95,7 +95,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataInserted'
+                $ref: '#/components/schemas/All_Tables'
   /setup/full:
     put:
       operationId: setupFull
@@ -111,7 +111,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataInserted'
+                $ref: '#/components/schemas/All_Tables'
 
   /items:
     get:
@@ -373,17 +373,6 @@ components:
         label:
           type: string
           example: Dining
-    DataInserted:
-      type: object
-      properties:
-        categories:
-          type: array
-          items:
-            $ref: '#/components/schemas/Category'
-        locationNames:
-          type: array
-          items:
-            $ref: '#/components/schemas/Location_Name'
     Location_Name_Upload_Result:
       type: object
       properties:

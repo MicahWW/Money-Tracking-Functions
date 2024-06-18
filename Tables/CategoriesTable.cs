@@ -40,6 +40,21 @@ namespace Money.Tables
 
         public static void Setup()
         {
+            var categories = new List<string> {
+                "No Category",
+                "Dining",
+                "Internet",
+                "Gas/Automotive",
+                "Grocery",
+                "Phone/Cable",
+                "Entertainment",
+                "Healthcare",
+                "Merchandise",
+                "Other",
+                "Payment",
+                "Other Services"
+            };
+
             using (var conn = DatabaseConnection.CreateConnection())
             {
                 using (var cmd = new MySqlCommand("", conn))
@@ -53,6 +68,23 @@ namespace Money.Tables
                         "  PRIMARY KEY (id)" +
                         ")";
                     cmd.ExecuteNonQuery();
+
+                    cmd.CommandText = $"SELECT COUNT(*) FROM {table_categories}";
+                    object result = cmd.ExecuteScalar();
+                    if (!(result != null && Convert.ToInt32(result) > 0))
+                    {
+                        cmd.CommandText = $"INSERT INTO {table_categories} VALUES (@id, @label)";
+                        cmd.Parameters.AddWithValue("@id", 1);
+                        cmd.Parameters.AddWithValue("@label", "One");
+                        cmd.Prepare();
+
+                        for (int i = 0; i < categories.Count; i++)
+                        {
+                            cmd.Parameters["@id"].Value = i + 1;
+                            cmd.Parameters["@label"].Value = categories[i];
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
                 }
             }
         }

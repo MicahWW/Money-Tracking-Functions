@@ -34,10 +34,10 @@ paths:
   /setup/category:
     put:
       operationId: setupCategory
-      summary: Creates the Categories table.
+      summary: Creates the Categories table and inserts the categories.
       description: |
         If the table does not already exist it will create on defined by the environment variable
-        `table-categories`.
+        `table-categories` and then add a list of categories to the table.
       tags:
         - Setup
       responses:
@@ -79,12 +79,12 @@ paths:
       responses:
         '200':
           description: Table created.
-  /setup/temp-data:
+  /setup/insert-examples:
     put:
-      operationId: setupTempData
-      summary: Will insert some data that is useful for quick debugging / development.
+      operationId: insertExampleData
+      summary: Inserts example data that is useful for quick debugging / development.
       description: |
-        For the categories & locationNames tables some example data is uploaded for easy debugging
+        For the locationNames & items tables some example data is uploaded for easy debugging
         and development of the program. If there is already data in one of tables it will skip over
         that specific one and do the other(s).
       tags:
@@ -95,7 +95,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataInserted'
+                $ref: '#/components/schemas/All_Tables'
   /setup/full:
     put:
       operationId: setupFull
@@ -105,13 +105,19 @@ paths:
         they should be run.
       tags:
         - Setup
+      parameters:
+        - in: query
+          name: insertData
+          schema:
+            type: boolean
+          description: Toggles weather to insert the data from /setup/insert-examples or not.
       responses:
         '200':
           description: Database & tables created with example data inserted
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DataInserted'
+                $ref: '#/components/schemas/All_Tables'
 
   /items:
     get:
@@ -237,11 +243,11 @@ paths:
                 type: object
                 properties:
                   items_added:
-                    $ref: '#/components/schemas/LocationNameUploadResult'
+                    $ref: '#/components/schemas/Location_Name_Upload_Result'
                   items_overwritten:
-                    $ref: '#/components/schemas/LocationNameUploadResult'
+                    $ref: '#/components/schemas/Location_Name_Upload_Result'
                   items_skipped:
-                    $ref: '#/components/schemas/LocationNameUploadResult'
+                    $ref: '#/components/schemas/Location_Name_Upload_Result'
   /location-categories:
     get:
       operationId: getLocationCategories
@@ -255,6 +261,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Location_Category'
+  /all-tables:
+    get:
+      operationId: getAllTables
+      summary: Gets data from all of the tables in the database in 1 call
+      tags:
+        - Get Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/All_Tables'
 
   /visualize-spending:
     get:
@@ -360,18 +379,7 @@ components:
         label:
           type: string
           example: Dining
-    DataInserted:
-      type: object
-      properties:
-        categories:
-          type: array
-          items:
-            $ref: '#/components/schemas/Category'
-        locationNames:
-          type: array
-          items:
-            $ref: '#/components/schemas/Location_Name'
-    LocationNameUploadResult:
+    Location_Name_Upload_Result:
       type: object
       properties:
         count:
@@ -381,3 +389,22 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Location_Name"
+    All_Tables:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        locationNames:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location_Name'
+        locationCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location_Category'

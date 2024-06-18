@@ -4,7 +4,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Money.Tables;
 
-namespace Money.Setup
+namespace Money.Functions.Setup
 {
     public class LocationNamesSetup
     {

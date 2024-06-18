@@ -37,7 +37,7 @@ paths:
       summary: Creates the Categories table.
       description: |
         If the table does not already exist it will create on defined by the environment variable
-        `table-categories`.
+        `table-categories` and then add a list of categories to the table.
       tags:
         - Setup
       responses:
@@ -79,7 +79,7 @@ paths:
       responses:
         '200':
           description: Table created.
-  /setup/temp-data:
+  /setup/insert-examples:
     put:
       operationId: setupTempData
       summary: Will insert some data that is useful for quick debugging / development.

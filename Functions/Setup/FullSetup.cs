@@ -25,7 +25,7 @@ namespace Money.Functions.Setup
             ItemsTable.Setup();
 
             if (req.Query["insertData"] != "false")
-                return new OkObjectResult(InsertTempData.Setup());
+                return new OkObjectResult(InsertExamples.Setup());
             else
                 return new OkObjectResult(AllTables.GetAllTables());
         }

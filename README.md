@@ -15,6 +15,8 @@ On the topic of the OpenAPI documentation, a few different methods of ensuring t
 - Scrub through more of the tools listed at https://openapi.tools/
   - https://github.com/apideck-libraries/portman
 - Use [Kiota](https://learn.microsoft.com/en-us/openapi/kiota/), a tool by Microsoft
+- Use [Playwright](https://playwright.dev/)
+  - Unsure if it will work with OpenAPI but worth looking into.
 
 ## OpenApi documentation
 As mentioned above this part is still a work in progress but documenting each of the endpoints using OpenAPI will greatly help define what the API is expecting to receive and return because as of writing there are still functions that reutrn data that don't give any useful information.

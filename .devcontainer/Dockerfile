@@ -4,6 +4,8 @@ FROM ubuntu:22.04
 RUN useradd -ms /bin/bash dev
 RUN echo dev:addToDocker | chpasswd
 
+ARG CACHEBUST=1 
+RUN echo ${CACHEBUST}
 RUN apt update
 
 # install git tools

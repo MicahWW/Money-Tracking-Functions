@@ -118,8 +118,35 @@ namespace Money.Tables
                                 throw;
                         }
                     }
+                    UpdateItems(result["items_added"]["items"]);
 
                     return result;
+                }
+            }
+        }
+
+        public static void UpdateItems(List<LocationNamesRecord> locationNames)
+        {
+            using (var conn = DatabaseConnection.CreateConnection())
+            {
+                using (var cmd = new MySqlCommand("", conn))
+                {
+                    cmd.CommandText = 
+                    "UPDATE " +
+                    $"  {SystemVariables.TableExpenseItems} " +
+                    $"SET location = @newName " +
+                    "WHERE location = @oldName";
+
+                    cmd.Parameters.AddWithValue("@newName", "name");
+                    cmd.Parameters.AddWithValue("@oldName", "name");
+                    cmd.Prepare();
+
+                    foreach(var item in locationNames)
+                    {
+                        cmd.Parameters["@newName"].Value = item.name;
+                        cmd.Parameters["@oldName"].Value = item.provider_name;
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
         }

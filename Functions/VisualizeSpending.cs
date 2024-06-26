@@ -18,7 +18,7 @@ namespace Money.Function
         }
 
         [Function("Visualize")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "visualize")] HttpRequest req)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "visualize-spending")] HttpRequest req)
         {
             #region Check query parameters
             string? type = req.Query["type"];

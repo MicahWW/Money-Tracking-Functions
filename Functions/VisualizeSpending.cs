@@ -18,8 +18,9 @@ namespace Money.Function
         }
 
         [Function("Visualize")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "visualize")] HttpRequest req)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "visualize-spending")] HttpRequest req)
         {
+            #region Check query parameters
             string? type = req.Query["type"];
             string? startDate = req.Query["startDate"];
             string? endDate = req.Query["endDate"];
@@ -31,23 +32,51 @@ namespace Money.Function
                 return new ErrorResponse("An end date was given with no start date.", 515);
             if (string.IsNullOrEmpty(endDate) && !string.IsNullOrEmpty(startDate))
                 return new ErrorResponse("A start date was given with no end date.", 515);
+
+            // adds the option to search within a date range
             if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
             {
                 DateOnly beginDate = DateOnly.Parse(startDate);
                 DateOnly lastDate = DateOnly.Parse(endDate);
 
-
                 whereDateRange = $"AND transaction_date BETWEEN '{beginDate:yyyy-MM-dd}' AND '{lastDate:yyyy-MM-dd}' ";
             }
+            #endregion Check query parameters
 
-            var categories = CategoriesTable.GetCategories();
+            var result = new List<VisualizeRecord>();
 
             using (var conn = DatabaseConnection.CreateConnection())
             {
                 using (var cmd = new MySqlCommand("", conn))
                 {
-                    if ( string.Compare(type, "sunburst", true) == 0 || string.Compare(type, "pie", true) == 0)
+                    // pie charts and sunburst charts use the same data, execpt
+                    // pie doesn't need the categories.
+                    if (string.Compare(type, "sunburst", true) == 0 ||
+                        string.Compare(type, "pie", true) == 0)
                     {
+                        cmd.CommandText =
+                            "SELECT " +
+                            "  category_id, SUM(amount) * -1 " +
+                            "FROM " +
+                            $"  {SystemVariables.TableExpenseItems} " +
+                            "WHERE " +
+                            "  amount < 0 " +
+                            // adds the optional date restriction
+                            whereDateRange +
+                            "GROUP BY " +
+                            "  category_id";
+                        var rdr = cmd.ExecuteReader();
+
+                        // this adds the categories for the items to leaf off of
+                        // in the sunburst chart
+                        while (rdr.Read())
+                            result.Add(new VisualizeRecord((int)rdr[0], (decimal)rdr[1]));
+                        rdr.Close();
+
+                        // Gets all of the items in the ExpenseItems table that
+                        // are a negative value (items where money was spent, 
+                        // not recieved) grouped by the location and category.
+                        // The amount is made postive so it can be dispalyed.
                         cmd.CommandText =
                             "SELECT " +
                             "  location, category_id, SUM(amount) * -1, COUNT(*) " +
@@ -55,26 +84,14 @@ namespace Money.Function
                             $"  {SystemVariables.TableExpenseItems} " +
                             "WHERE " +
                             "  amount < 0 " +
+                            // adds the optional date restriction
                             whereDateRange +
                             "GROUP BY " +
                             "  location, category_id";
+                        rdr = cmd.ExecuteReader();
 
-                        var rdr = cmd.ExecuteReader();
-
-                        var result = new List<VisualizeRecord>();
-
-                        // this adds the categories for the items to leaf off of
-                        categories.ForEach(x =>
-                        {
-                            result.Add(new VisualizeRecord(x.label));
-                        });
                         while (rdr.Read())
-                        {
-                            var category_find = categories.Find(x => x.id == (int)rdr[1]);
-                            string category_name = category_find != null ? category_find.label : "error";
-                            // (int)(long) : this is being used because MySQL is returning a int64
-                            result.Add(new VisualizeRecord((string)rdr[0], category_name, (decimal)rdr[2], (int)(long)rdr[3]));
-                        }
+                            result.Add(new VisualizeRecord((string)rdr[0], (int)rdr[1], (decimal)rdr[2], (int)(long)rdr[3]));
 
                         return new OkObjectResult(result);
                     }
@@ -93,17 +110,18 @@ namespace Money.Function
             public decimal amount { get; set; }
             public int count { get; set; }
 
-            public VisualizeRecord(string location, string category, decimal amount, int count)
+            public VisualizeRecord(string location, int category_id, decimal amount, int count)
             {
                 this.location = location;
-                this.category = category;
+                this.category = CategoriesTable.GetCategories(category_id.ToString())[0].label;
                 this.amount = amount;
                 this.count = count;
             }
 
-            public VisualizeRecord(string category)
+            public VisualizeRecord(int category_id, decimal amount)
             {
-                this.location = category;
+                this.amount = amount;
+                this.location = CategoriesTable.GetCategories(category_id.ToString())[0].label;
             }
         }
     }

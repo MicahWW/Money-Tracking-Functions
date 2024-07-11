@@ -301,7 +301,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Location_Category'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    location:
+                      type: string
+                      example: Chipotle
+                    category:
+                      type: string
+                      example: Dining
+                    amount:
+                      type: number
+                      example: 19.80
+                    count:
+                      type: number
+                      example: 2
   /missing-location-names:
     get:
       operationId: missingLocationNames

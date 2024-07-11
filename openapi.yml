@@ -55,7 +55,7 @@ paths:
       responses:
         '200':
           description: Table created.
-  /setup/location-cateogry:
+  /setup/location-category:
     put:
       operationId: setupLocationCategory
       summary: Creates the Location Categories table.
@@ -260,7 +260,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Location_Category'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location_Category'
   /all-tables:
     get:
       operationId: getAllTables

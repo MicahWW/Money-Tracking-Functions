@@ -30,7 +30,7 @@
   <ItemGroup>
     <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext" />
   </ItemGroup>
-<ItemGroup>
-  <None Update="openapi.yml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
-</ItemGroup>
+  <ItemGroup>
+    <None Update="openapi.yml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

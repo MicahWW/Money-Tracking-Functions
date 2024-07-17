@@ -14,7 +14,8 @@
                 "ms-azuretools.vscode-azurestaticwebapps",
                 "ms-dotnettools.csharp",
                 "ms-vscode.azure-account",
-                "ms-azuretools.vscode-docker"
+                "ms-azuretools.vscode-docker",
+                "42Crunch.vscode-openapi"
             ]
         }
     }

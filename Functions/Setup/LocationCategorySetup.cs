@@ -16,7 +16,7 @@ namespace Money.Functions.Setup
         }
 
         [Function("LocationCategorySetup")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/location-category")] HttpRequest req)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "get", Route = "setup/location-category")] HttpRequest req)
         {
             LocationCategoryTable.Setup();
 

@@ -30,7 +30,7 @@ namespace Money.Functions.Setup
         }
 
         [Function("DatabaseSetup")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/database")] HttpRequest req)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "get", Route = "setup/database")] HttpRequest req)
         {
             Setup();
 

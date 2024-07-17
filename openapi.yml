@@ -20,7 +20,7 @@ tags:
 
 paths:
   /setup/database:
-    put:
+    get:
       operationId: setupDatabase
       summary: Creates the database.
       description: |
@@ -32,7 +32,7 @@ paths:
         '200':
           description: Database created.
   /setup/category:
-    put:
+    get:
       operationId: setupCategory
       summary: Creates the Categories table and inserts the categories.
       description: |
@@ -44,7 +44,7 @@ paths:
         '200':
           description: Table created.
   /setup/item:
-    put:
+    get:
       operationId: setupItem
       summary: Creates the Items table.
       description: |
@@ -56,7 +56,7 @@ paths:
         '200':
           description: Table created.
   /setup/location-category:
-    put:
+    get:
       operationId: setupLocationCategory
       summary: Creates the Location Categories table.
       description: |
@@ -68,7 +68,7 @@ paths:
         '200':
           description: Table created.
   /setup/location-name:
-    put:
+    get:
       operationId: setupLocationName
       summary: Creates the Location Name table.
       description: |
@@ -80,7 +80,7 @@ paths:
         '200':
           description: Table created.
   /setup/insert-examples:
-    put:
+    get:
       operationId: insertExampleData
       summary: Inserts example data that is useful for quick debugging / development.
       description: |
@@ -97,7 +97,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/All_Tables'
   /setup/full:
-    put:
+    get:
       operationId: setupFull
       summary: Calls all of the functions listed in this setup folder.
       description: |

@@ -1,0 +1,1 @@
+This is a concept of how tests can be run, this is by no means a good setup for a test. That being setup right now to use it build then run the docker compose file in this directory. Once running you can check the logs of the tester service via docker desktop if there were any general issues and to see the test result find the file `results.html` in the directory `/home/tester/`.

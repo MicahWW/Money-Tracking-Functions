@@ -1,0 +1,34 @@
+name: test_environment
+
+services:
+  tester:
+    depends_on:
+      - functions
+    build: .
+    stdin_open: true
+    tty: true
+  functions:
+    extends:
+      file: ../compose.yml
+      service: functions
+    build:
+      args: !override
+        - MASTER_KEY=masterKey
+        - MYSQL_HOST=db
+        - MYSQL_USER=root
+        - MYSQL_PASS=somethingDifferent
+        - MYSQL_DB=money_tracking
+        - TABLE_CATEGORIES=categories
+        - TABLE_LOCATION_LONG_TO_SHORT=location_names
+        - TABLE_LOCATION_CATEGORY_DEFAULTS=location_categories
+        - TABLE_EXPENSE_ITEMS=items
+    ports: !override
+      - "5000:80"
+  db:
+    extends:
+      file: ../compose.yml
+      service: db
+    environment:
+      - MYSQL_ROOT_PASSWORD=somethingDifferent
+volumes:
+  money-tracking-db:

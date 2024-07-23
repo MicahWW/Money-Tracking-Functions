@@ -1,0 +1,29 @@
+name: money_backend
+
+services:
+  functions:
+    build:
+      context: .
+      dockerfile: functions.dockerfile
+      args:
+        - MASTER_KEY=${MASTER_KEY}
+        - MYSQL_HOST=${MYSQL_HOST}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASS=${MYSQL_PASSWORD}
+        - MYSQL_DB=${MYSQL_DB}
+        - TABLE_CATEGORIES=${TABLE_CATEGORIES}
+        - TABLE_LOCATION_LONG_TO_SHORT=${TABLE_LOCATION_LONG_TO_SHORT}
+        - TABLE_LOCATION_CATEGORY_DEFAULTS=${TABLE_LOCATION_CATEGORY_DEFAULTS}
+        - TABLE_EXPENSE_ITEMS=${TABLE_EXPENSE_ITEMS}
+    restart: always
+    ports:
+      - "8080:80"
+  db:
+    image: mysql:8.4
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - money-tracking-db:/var/lib/mysql
+volumes:
+  money-tracking-db:

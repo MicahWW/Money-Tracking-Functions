@@ -50,12 +50,12 @@ namespace Money.Tables
             public CategoriesTable.CategoriesRecord category { get; set; }
             public DateOnly transaction_date { get; set; }
 
-            public ItemsReturnRecord(int id, string location, decimal amount, int category_id, DateOnly trancation_date)
+            public ItemsReturnRecord(int id, string location, decimal amount, int category_id, DateOnly transaction_date)
             {
                 this.id = id;
                 this.location = location;
                 this.amount = amount;
-                this.transaction_date = trancation_date;
+                this.transaction_date = transaction_date;
                 List<CategoriesTable.CategoriesRecord> temp = CategoriesTable.GetCategories(category_id.ToString());
                 if (temp.Count == 1 && temp[0] != null)
                     this.category = temp[0];

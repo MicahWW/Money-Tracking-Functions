@@ -176,7 +176,7 @@ namespace Money.Tables
                 case "application/json":
                     List<LocationNamesRecord>? deserializedData;
                     /* When deserializing it will throw exceptions when an item
-                     * is missing one of the requried parameters defined in by
+                     * is missing one of the required parameters defined in by
                      * [JsonRequired]. Error handling should be handled when
                      * calling this function so the proper messaging can be returned.
                      */

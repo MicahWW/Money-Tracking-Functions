@@ -18,5 +18,9 @@
             "strings": true
         },
         "editor.rulers": [100]
-    }
+    },
+    "cSpell.ignorePaths": [
+        ".vscode/",
+        ".devcontainer/"
+    ]
 }

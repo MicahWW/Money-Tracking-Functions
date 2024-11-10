@@ -21,23 +21,39 @@ namespace Money.Functions
         [Function("Health")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
         {
-            var healthStatus = await _healthCheck.CheckHealthAsync();
-            string systemVariablesStatus;
-            if (SystemVariables.CheckAll())
-                systemVariablesStatus = "Healthy";
-            else
-                systemVariablesStatus = "Unhealthy";
-
             var output = new Dictionary<dynamic, dynamic>
             {
-                { "healthStatus", healthStatus.Status.ToString() },
-                { "systemVariablesStatus", systemVariablesStatus }
+                { "healthStatus", (await _healthCheck.CheckHealthAsync()).Status.ToString() },
+                { "systemVariablesStatus", SystemVariables.CheckAll() ? "Healthy" : "Unhealthy" }
             };
 
-            if (systemVariablesStatus == "Healthy" && healthStatus.Status == HealthStatus.Healthy)
-                return new OkObjectResult(output);
-            else
-                return new ErrorResponse(output, 503);
+            try
+            {
+                using (var conn = DatabaseConnection.CreateConnection())
+                {
+                    // do nothing, just testing connection
+                }
+                output.Add("databaseConnection", "Healthy");
+            }
+            catch (DatabaseConnection.DatabaseConnectionException ex)
+            {
+                output.Add("databaseConnection", "Unhealthy");
+                output.Add("mySqlError", new Dictionary<string, dynamic> 
+                {
+                    { "MySQLErrorNumber", ex.MySQLErrorNumber },
+                    { "MySQLErrorMessage", ex.MySQLErrorMessage }
+                });
+            }
+
+            foreach (var pair in output)
+            {
+                if (pair.Value is string )
+                {
+                    if (pair.Value == "Unhealthy")
+                        return new ErrorResponse(output, 503);
+                }
+            }
+            return new OkObjectResult(output);
         }
     }
 }

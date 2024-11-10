@@ -260,7 +260,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Location_Category'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location_Category'
   /all-tables:
     get:
       operationId: getAllTables

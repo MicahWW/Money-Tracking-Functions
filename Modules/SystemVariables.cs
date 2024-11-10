@@ -54,5 +54,26 @@ namespace Money.Modules
         {
             public SystemVariablesException(string message) : base(message) { }
         }
+
+        public static bool CheckAll()
+        {
+            try
+            {
+                string test;
+                test = MySqlHostName;
+                test = MySqlUserName;
+                test = MySqlPassword;
+                test = MySqlDatabase;
+                test = TableCategories;
+                test = TableLocationCategories;
+                test = TableExpenseItems;
+                test = TableLocationNames;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

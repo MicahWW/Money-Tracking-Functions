@@ -13,5 +13,10 @@ namespace Money.Modules
         {
             this.StatusCode = code;
         }
+
+        public ErrorResponse(Dictionary<dynamic, dynamic> jsonMessage, int code): base(jsonMessage)
+        {
+            this.StatusCode = code;
+        }
     }
 }

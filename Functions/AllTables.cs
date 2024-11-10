@@ -28,7 +28,7 @@ namespace Money.Functions
                 { "categories", CategoriesTable.GetCategories() },
                 { "items", ItemsTable.GetItems() },
                 { "locationCategories", LocationCategoryTable.GetLocationCategories() },
-                { "locationnames", LocationNamesTable.GetLocationNames() }
+                { "locationNames", LocationNamesTable.GetLocationNames() }
             };
         }
     }

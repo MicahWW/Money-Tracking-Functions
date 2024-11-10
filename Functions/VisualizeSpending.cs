@@ -49,7 +49,7 @@ namespace Money.Function
             {
                 using (var cmd = new MySqlCommand("", conn))
                 {
-                    // pie charts and sunburst charts use the same data, execpt
+                    // pie charts and sunburst charts use the same data, except
                     // pie doesn't need the categories.
                     if (string.Compare(type, "sunburst", true) == 0 ||
                         string.Compare(type, "pie", true) == 0)
@@ -75,8 +75,8 @@ namespace Money.Function
 
                         // Gets all of the items in the ExpenseItems table that
                         // are a negative value (items where money was spent, 
-                        // not recieved) grouped by the location and category.
-                        // The amount is made postive so it can be dispalyed.
+                        // not received) grouped by the location and category.
+                        // The amount is made positive so it can be displayed.
                         cmd.CommandText =
                             "SELECT " +
                             "  location, category_id, SUM(amount) * -1, COUNT(*) " +

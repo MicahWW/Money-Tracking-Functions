@@ -16,7 +16,7 @@ namespace Money.Functions.Setup
         }
 
         [Function("FullSetup")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/full")] HttpRequest req)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "get", Route = "setup/full")] HttpRequest req)
         {
             DatabaseSetup.Setup();
             CategoriesTable.Setup();

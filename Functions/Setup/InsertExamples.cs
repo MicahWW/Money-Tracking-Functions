@@ -18,7 +18,7 @@ namespace Money.Functions.Setup
         }
 
         [Function("InsertExamples")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "put", Route = "setup/insert-examples")] HttpRequest req)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Admin, "get", Route = "setup/insert-examples")] HttpRequest req)
         {
             return new OkObjectResult(Setup());
         }

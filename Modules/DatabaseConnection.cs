@@ -35,18 +35,18 @@ namespace Money.Modules
             }
             catch (MySqlException ex)
             {
-                throw new DatabaseConnectionExecption(ex);
+                throw new DatabaseConnectionException(ex);
             }
 
             return conn;
         }
 
-        public class DatabaseConnectionExecption : Exception
+        public class DatabaseConnectionException : Exception
         {
             public int MySQLErrorNumber { get; private set; }
             public string MySQLErrorMessage { get; private set; }
 
-            public DatabaseConnectionExecption(MySqlException ex) : base
+            public DatabaseConnectionException(MySqlException ex) : base
             (
                 $"MySQL error code: {ex.Number} - {ex.Message}"
             )

@@ -17,5 +17,6 @@
                 "ms-azuretools.vscode-docker"
             ]
         }
-    }
+    },
+    "postCreateCommand": "dotnet restore"
 }
